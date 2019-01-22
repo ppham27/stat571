@@ -204,7 +204,8 @@ For the remainder of this problem, condition on realizations of the data for whi
     \centering
     \includegraphics{p1_simulation_results.pdf}
     \caption{Data from Table \ref{tab:p1_simulation_results} along with
-      asymptotic slope $\beta_1$.}
+      asymptotic slope ($\beta_1$), the bias ($\hat{\beta}_1 - \beta_1$), and
+      variance ($\hat{\sigma}^2$).}
     \label{fig:p1_simulation_results}
   \end{figure}
 
@@ -212,6 +213,36 @@ For the remainder of this problem, condition on realizations of the data for whi
 \end{description}
 
 {\item Comment on your findings in part (e).  Is the bias in estimating $\beta_1$ surprising?  Why or why not?  How concerned should one be about this bias? }
+
+\begin{description}
+\item[Solution:] The bias is not suprising. As discussed in Part (d), the usual
+  method of proving that the estimate is unbiased does not work since the true
+  model is not linear.
+
+  The bias decreases quickly with increasing $n$, so it is not too concerning
+  with reasonable sample sizes. Moreover, the standard error is larger than the
+  bias, so in the bias-variance decomposition,
+  \begin{align*}
+    \mathbb{E}\left[
+      \left(\hat{\beta}_1 - \beta_1\right)^2
+    \right]
+    &=
+      \mathbb{E}\left[
+      \left(\hat{\beta}_1 - \beta_1\right)^2
+      \right] =
+    \mathbb{E}\left[\hat{\beta}_1^2\right] - 2\mathbb{E}\left[\hat{\beta}_1\right]\beta_1 + \beta_1^2  \\
+    &= \operatorname{var}\left(\hat{\beta}_1\right) + \mathbb{E}\left[
+      \hat{\beta}_1
+      \right]^2  - 2\mathbb{E}\left[\hat{\beta}_1\right]\beta_1 + \beta_1^2  \\
+    &= \left(\mathbb{E}\left[\hat{\beta}_1\right] - \beta_1\right)^2 + \operatorname{var}\left(\hat{\beta}_1\right) \\
+    &= \left[\operatorname{Bias}\left(\hat{\beta}_1\right)\right]^2 + \operatorname{var}\left(\hat{\beta}_1\right),
+  \end{align*}
+  the variance term which is the standard error squared will dominate. Indeed,
+  according to Figure \ref{fig:p1_simulation_results}, the variance is much
+  larger than the bias when $n$ is small. When $n$ is large, both the bias and
+  variance are small, so neither is too concerning.
+\end{description}
+
 {\item It is possible to derive exact values for the biases estimated in part (d) by enumerating all possible draws of $x_1, \ldots, x_n$.  Do this calculation for $n=2,4,6,8$.  Report your numerical findings and overlay them on your plot from part (e).   Show how you can do the calculation entirely by hand for $n=2$ (you may use a computer for matrix algebra).  Although it is highly advisable to use a computer for this calculation for $n>2$, simulation results are not sufficient.  Your calculation of the bias must be exactly correct up to the computer's floating point precision.}
 \end{enumerate}
 

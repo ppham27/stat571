@@ -196,7 +196,7 @@ For the remainder of this problem, condition on realizations of the data for whi
     \caption{The estimate for the slope ($\hat{\beta}_1$) and standard error for
       the estimate ($\hat{\sigma}$) were each calculated with $10^6$ trials. The
       last column $\mathbb{E}\left[\hat{\beta}_1\right]$ was calculated
-      numerically by enumerating over the possible draws of $X$.}
+      numerically by enumerating over the possible draws of $X$, which is detailed in Part (g).}
     \label{tab:p1_simulation_results}
   \end{table}
 
@@ -244,6 +244,61 @@ For the remainder of this problem, condition on realizations of the data for whi
 \end{description}
 
 {\item It is possible to derive exact values for the biases estimated in part (d) by enumerating all possible draws of $x_1, \ldots, x_n$.  Do this calculation for $n=2,4,6,8$.  Report your numerical findings and overlay them on your plot from part (e).   Show how you can do the calculation entirely by hand for $n=2$ (you may use a computer for matrix algebra).  Although it is highly advisable to use a computer for this calculation for $n>2$, simulation results are not sufficient.  Your calculation of the bias must be exactly correct up to the computer's floating point precision.}
+
+\begin{description}
+\item[Solution:] $\mathbb{E}\left[\hat{\beta}\right]$ can be efficiently
+  calculated by noticing that
+  \begin{equation}
+    \mathbb{E}\left[\hat{\beta} \mid X \right] =
+    \mathbb{E}\left[\left(X^\intercal X\right)^{-1}X^\intercal Y
+      \mid X
+    \right]
+    = \left(X^\intercal X\right)^{-1}X^\intercal \mu.
+  \end{equation}  
+  is the same for different permuations of $X$.
+
+  Assume that each $X_{(j_0,j_1,j_3)} \in \mathbb{R}^n$ is a vector of $j_0$
+  $0$s, $j_1$ $1$s, and $j_3$ $3$s, where $j_0 + j_1 + j_3 = n$ and
+  $j_0,j_1,j_3 \in \left\{0,1,\ldots, n - 1\right\}$. The triplets $\left(j_0, j_1, j_3\right)$
+  can be seen as coming from the multinomial distribution, so
+  \begin{equation}
+    \mathbb{P}\left(\left(j_0, j_1, j_3\right)\right) = \frac{n!}{j_0!j_1!j_3!}\left(\frac{1}{3}\right)^n.
+  \end{equation}
+
+  Therefore, we have that
+  \begin{align*}
+    \mathbb{E}\left[\hat{\beta}\right]
+    &= \mathbb{E}\left[\mathbb{E}\left[
+      \hat{\beta}
+      \mid X
+      \right]\right] \\
+    &= \sum_{\left\{
+    \left(j_0, j_1, j_3\right) \in \left\{0,1,\ldots, n - 1\right\}^3
+      \mid j_0 + j_1 + j_3 = n\right\}}
+      \mathbb{P}\left(\left(j_0, j_1, j_3 = n\right)\right)
+      \left(X^\intercal X\right)^{-1}X^\intercal \mu \\
+    &= \sum_{\left\{
+    \left(j_0, j_1, j_3\right) \in \left\{0,1,\ldots, n - 1\right\}^3
+      \mid j_0 + j_1 + j_3 = n\right\}}
+      \frac{n!}{j_0!j_1!j_3!}\left(\frac{1}{3}\right)^n
+      \left(X^\intercal X\right)^{-1}X^\intercal \mu.
+  \end{align*}
+
+  \begin{figure}
+    \centering
+    \includegraphics{p1_bias_comparison}
+    \caption{Comparison of the simulated bias from Part (e) against the exact
+      calculation in Part (g).}
+    \label{fig:p1_bias_comparison}
+  \end{figure}
+  
+  The results of this calculation can be seen in the last column of Table
+  \ref{tab:p1_simulation_results}. The biases from the simulation are plotted
+  against the exact calculation in Figure \ref{fig:p1_bias_comparison}.
+
+  Both the table and figure show that the simulation and calulations
+  agree. There appears to be more noise with larger $n$, however.
+\end{description}
 \end{enumerate}
 
 

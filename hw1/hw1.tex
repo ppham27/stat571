@@ -14,6 +14,7 @@
 \usepackage{enumerate}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{pdfpages}
 \newcommand*{\justifyheading}{\raggedleft}
 
 
@@ -175,7 +176,7 @@ by ordinary least squares and overlay the fitted regression line on your scatter
     \right] = \beta.
   \end{equation}
 
-  However, This calculation is incorrect when $Y$ depends on $X$ in a non-linear
+  However, This calculation is incorrect when $Y$ depends on $X$ in a nonlinear
   way as with these data.
 \end{description}
 
@@ -521,7 +522,7 @@ $m$ followup times, indexed by $j=1,\ldots,m$.  Let $Y_{ij}$ be the literacy sco
 deterministic and known in advance, and assume the true data-generating
 mechanism can be written
 \begin{equation}
-\label{eq1}
+\label{eqn:p3_eq1}
 Y_{ij}=f(x_{i1})+\beta_L(x_{ij}-x_{i1})+\epsilon_{ij}
 \end{equation}
 with i.i.d. $\epsilon_{ij}\sim N(0,\sigma^2)$.  The unknown function $f(\cdot)$ 
@@ -532,39 +533,171 @@ the exposure partioning method proposed on slide 1.44
 (see, also, Diggle et al. page 16), based on the linear regression estimating equations
 with the mean model
 \begin{equation}
-\label{eq2}
+\label{eqn:p3_eq2}
 E(Y_{ij})=\beta_0 + \beta_C x_{i1} + \beta_L (x_{ij}-x_{i1}).
 \end{equation}}
 \begin{enumerate}[(a)]
-{\em \item Give a sufficient condition on the data-generating mechanism for $Y_{ij}$ in equation~(\ref{eq1}) to guarantee
-unbiased estimation of $\beta_L$ and valid model-based standard errors.}
+{\em \item Give a sufficient condition on the data-generating mechanism for $Y_{ij}$ in equation~(\ref{eqn:p3_eq1}) to guarantee
+  unbiased estimation of $\beta_L$ and valid model-based standard errors.}
+
+\begin{description}
+\item[Solution:] Let $\tilde{X}$ be the matrix with $1$s in the first columns,
+  $x_{i1}$ (repeated as necessary) in the second column and $x_{ij} - x_{i1}$ in
+  the third column. Let $Y$ be a vector of the corresponding literacy scores. We
+  can estimate $\beta_L$ with the least squares estimator
+  \begin{equation}
+    \hat{\beta} =
+    \begin{pmatrix}
+      \hat{\beta}_0 \\
+      \hat{\beta}_C \\
+      \hat{\beta}_L
+    \end{pmatrix}
+    =
+    \left(\tilde{X}^\intercal\tilde{X}\right)^{-1}\tilde{X}^\intercal Y.
+  \end{equation}
+  If we substitute Equation \ref{eqn:p3_eq1} for $Y$,
+  $\mathbb{E}\left[\hat{\beta}\right] = \beta$ if $f$ is a linear function, that
+  is, $f\left(x_{i1}\right) = \beta_0x_{i1}$ for some constant $\beta_0$. 
+
+  Given $f$ is linear, the covariance matrix for our estimator is
+  \begin{equation}
+    \operatorname{var}\left(\hat{\beta}\right)
+    =
+    \sigma^2\left(\tilde{X}^\intercal \tilde{X}\right)^{-1}.
+  \end{equation}
+\end{description}
+
 {\em \item Give a sufficient condition on the choice of follow-up times in the study design to guarantee
 unbiased estimation of $\beta_L$, even if the condition in part (a) is violated.  Thinking about
 when confounding bias is a problem will be helpful here.}
+
+\begin{description}
+\item[Solution:] To control for the cofounding factors, we can use
+  randomization. In particular, if follow-up times are selected independently of
+  the subjects' ages, any systematic bias from incorrectly predicting base
+  literacy rates will be eliminated.
+
+  To see this, note that if the covariates are independent
+  $\mathbb{E}\left[\tilde{X}^\intercal \tilde{X}\right]$ is a diagonal matrix
+  (without loss of generality assume $\tilde{X}$ is centered), so the
+  coefficients are estimated independently of each other.
+\end{description}
+
 {\em \item Download the modified made-up literacy data from the course web site (you can find these data with the homework files, not in the general dataset section), and generate
 one or more exploratory plots.  Describe how you can graphically see evidence that neither of
 the above conditions is satisfied.}
+
+\begin{description}
+\item[Solution:] See the plotted data in Figure \ref{fig:p3_data}.
+
+  \begin{figure}
+    \centering
+    \includegraphics{p3_data.pdf}
+    \caption{In the computer literacy data, each subject has 3 observations
+      taken at similar follow-up periods.}
+    \label{fig:p3_data}
+  \end{figure}
+  Looking at the red points, one sees that $f$ is clearly not linear, so the
+  assumption in Part (a) is violated. Each subject was followed up with
+  twice. $x_{i3} - x_{i2}$ appears to be similar to $x_{i2} - x_{i1}$. For older
+  subjects, the follow up periods appear to be shorter. Clearly, the follow up
+  times were not selected independently of the subjects' ages, so the assumption
+  Part (b) is violated.
+\end{description}
+
 {\em \item Propose an alternative regression model that can still be used to unbiasedly estimate $\beta_L$ and give valid model-based standard errors.  Fit this model to the downloaded data using the $\texttt{lm()}$ function in $\texttt{R}$ and report your findings (point estimate and standard error).
-Compare to what you obtain by fitting model~(\ref{eq2}) to the data.}
+  Compare to what you obtain by fitting model~(\ref{eqn:p3_eq2}) to the data.}
+
+\begin{description}
+\item[Solution:] We can fit a model directly to the difference
+  $Y_{ij} - Y_{i1} = \beta_L\left(x_{ij}- x_{i1}\right) + \left(\epsilon_{ij} -
+    \epsilon_{i1}\right)$, $j \neq 1$. In this way, we discard one-third of our
+  observations. Let $\tilde{X}_3$ be the third column of $\tilde{X}$ and let
+  $\tilde{Y}$ be the vector of $Y_{ij}- Y_{i1}$. Assume that we have discarded
+  the $j = 1$ entries. Then, we can our new model can estimated
+  $\hat{\beta}_L =
+  \left(\tilde{X}_3^\intercal\tilde{X}_3\right)^{-1}\tilde{X}_3^\intercal\tilde{Y}$.
+  Since the expected residual is $0$ this estimator is always unbiased.
+
+  Fitting this model to the data, we find that
+  $\boxed{\hat{\beta}_L = 1.02185154}$ with corresponding standard error
+  $\boxed{\sqrt{\hat{\operatorname{var}}\left(\hat{\beta}_L\right)} =
+    0.032418976.}$
+
+  If we fit the model in Equation \ref{eqn:p3_eq2}, we have
+  $\boxed{\hat{\beta}_L = 1.24721578}$ with corresponding standard error
+  $\boxed{\sqrt{\hat{\operatorname{var}}\left(\hat{\beta}_L\right)} = 1.06297.}$
+  Thus, the misspecified model leads to a much higher standard error.
+\end{description}
+
 {\em \item Design and conduct a simulation study to illustrate the following 
 \begin{enumerate}
-\item Model~(\ref{eq2}) can fail to give unbiased estimates of $\beta_L$ without at least one of the additional conditions from parts (a) and (b).
-\item Model~(\ref{eq2}) does give unbiased estimates if either of the additional conditions from parts (a) and (b) is satisfied.
+\item Model~(\ref{eqn:p3_eq2}) can fail to give unbiased estimates of $\beta_L$ without at least one of the additional conditions from parts (a) and (b).
+\item Model~(\ref{eqn:p3_eq2}) does give unbiased estimates if either of the additional conditions from parts (a) and (b) is satisfied.
 \item The model you propose in part (d) works, regardless.
 \end{enumerate}
 You will need to consider a few choice of $f(\cdot)$ and study designs $\{x_{ij}\}$
 to illustrate points (i) through (iii).  Note that in earlier parts of the problem, you should have 
 argued theoretically that each of these points is true; the purpose of the simulation study is to verify
 and illustrate your conclusions. }
-{\em \item In your simulation study, what do you notice about the standard error estimates from the model in equation~(\ref{eq2}) when the condition from part (b) is satisfied but
-the condition from part (a) is not satisfied?  Do sandwich standard errors fix the problem?  }
+
+\begin{description}
+\item[Solution:] I fixed $\beta_L = 2$, $\sigma^2 = 1$, and use 64
+  subjects. If I specified 2 follow-up times for each subject and let
+  $f\left(x\right) = 200*\exp\left(-x\right)$, both assumptions are
+  violated. Indeed, fitting the model in Equation \ref{eqn:p3_eq2} led to a
+  biased estimate of $2.16$. The alternative model from the previous section
+  handle this case fine and produced an unbiased estimate.
+
+  Next, I enforced the condition in Part (a) and made $f$ linear,
+  $f\left(x\right) = 200 - 12x$. Both the model in Equation \ref{eqn:p3_eq2} and
+  the alternative model result in unbiased estimates.
+
+  When it's enforced that the follow up times are independent of the base age,
+  again both models produce unbiased estimates even if the $f$ is a nonlinear
+  function like $f\left(x\right) = 200*\exp\left(-x\right)$.
+
+  Code for all these simulations is found in the Appendix.
+\end{description}
+
+{\em \item In your simulation study, what do you notice about the standard error estimates from the model in equation~(\ref{eqn:p3_eq2}) when the condition from part (b) is satisfied but
+  the condition from part (a) is not satisfied?  Do sandwich standard errors fix the problem?  }
+
+\begin{description}
+\item[Solution:] With the usual linear regression estimate for the variance of
+  $\hat{\beta}_L$, the standard errors are overestimated. My simulations show
+  that the 95\% confidence interval actually covered the true mean 98.1\% of the
+  time.
+
+  Sandwich estimation seems to help a little, but the situation is the same with
+  the same: the 95\% confidence interval with the sandwich standard errors
+  covers the true mean 97.75\% of the time, so it also overestimates the
+  standard error.
+\end{description}
+
 {\em \item Explain, theoretically, what is going wrong in part (f) of this problem.
 This involves some fairly careful thinking about misspecified mean models and what is required
 for sandwich estimation to be valid.}
+
+\begin{description}
+\item[Solution:] Sandwich estimation protects against misspecification of the
+  variance by using empirical estimates. The \emph{bread} part of the sandwich
+  estimator in the case of ordinary least squares is $X^\intercal\hat{\Sigma}X$,
+  where $\hat{\Sigma}_{ii}$ is diagonal, and
+  $\hat{\Sigma}_{ii} = \left(Y_i - X\hat{\beta}\right)^2$. Thus, the diagonal
+  contains empirical residual estimates. Those estimates depend on our mean
+  model, which in this case is incorrect, biased, and inconsistent since the $f$
+  is nonlinear. Thus, the results of the sandwich estimator will also be biased
+  and inconsistent.
+\end{description}
+
 \end{enumerate} 
 
 \section*{Appendix}
 
 Code for fitting models and generating plots is attached.
+
+\includepdf[pages=-]{p1_simulation.pdf}
+\includepdf[pages=-]{p3_regression.pdf}
 
 \end{document}

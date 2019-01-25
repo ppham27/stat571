@@ -315,11 +315,203 @@ This is called the ``average slope'' representation.
 }
 \begin{enumerate}[(a)]
 {\em \item Suppose that $\bSigma$, the covariance of $\bY$, is a diagonal matrix with known entries $\sigma_1^2,\ldots,\sigma_n^2$.
-Derive the weights for an ``average slope'' representation for the optimal generalized least squares (GLS) estimate of $\beta_1$ (see exercise 8.1 in the Wakefield text if you are not sure of the form of the optimal GLS estimate).  A formal proof is optional, but you should provide a convincing justification for the specific form of your answer.  HINT: One way to approach this problem is to think about what happens when the $\sigma^2_i$ are all rational numbers, i.e., they can be expressed as fractions.}
+  Derive the weights for an ``average slope'' representation for the optimal generalized least squares (GLS) estimate of $\beta_1$ (see exercise 8.1 in the Wakefield text if you are not sure of the form of the optimal GLS estimate).  A formal proof is optional, but you should provide a convincing justification for the specific form of your answer.  HINT: One way to approach this problem is to think about what happens when the $\sigma^2_i$ are all rational numbers, i.e., they can be expressed as fractions.}
+
+\begin{description}
+\item[Solution:] The likelihood function is
+  \begin{equation}
+    L_{X,y,\Sigma}\left(\beta\right) = f_\beta\left(y\right)
+    = \frac{1}{\sqrt{\det\left(2\pi\Sigma\right)}}\exp\left(
+      -\frac{1}{2}\left(y - X\beta\right)^{\intercal}\Sigma^{-1}\left(y - X\beta\right)
+    \right).
+  \end{equation}
+  Maximizing this likelihood by taking the $\log$ and derivative, we estimate
+  $\beta$ to obtain the maximum likelihood estimate
+  $\hat{\beta} =
+  \left(X^\intercal\Sigma^{-1}X\right)^{-1}X^\intercal\Sigma^{-1}y$.
+
+  Expanding this out, we find that
+  \begin{equation*}
+    \hat{\beta} =
+    \left.
+      \begin{pmatrix}
+        \displaystyle
+      \left(\sum_{i=1}^n\frac{x_i^2}{\sigma_i^2}\right)
+      \left(\sum_{i=1}^n\frac{y_i}{\sigma_i^2}\right) -
+      \left(\sum_{i=1}^n\frac{x_i}{\sigma_i^2}\right)
+      \left(\sum_{i=1}^n\frac{x_iy_i}{\sigma_i^2}\right) \\
+      \displaystyle
+      \left(\sum_{i=1}^n\frac{1}{\sigma_i^2}\right)\left(\sum_{i=1}^n\frac{x_iy_i}{\sigma_i^2}\right) -
+      \left(\sum_{i=1}^n\frac{x_i}{\sigma_i^2}\right)
+      \left(\sum_{i=1}^n\frac{y_i}{\sigma_i^2}\right)      
+    \end{pmatrix}
+    \middle/\left(
+    \left(\sum_{i=1}^n\frac{1}{\sigma_i^2}\right)
+      \left(\sum_{i=1}^n\frac{x_i^2}{\sigma_i^2}\right) -
+      \left(\sum_{i=1}^n \frac{x_i}{\sigma_i^2}\right)^2
+    \right)
+  \right..  
+\end{equation*}
+
+Let
+$\bar{x} = \left.\sum_{i=1}^n \frac{1}{\sigma_i^2}x_i\middle/\sum_{i=1}^n
+  \frac{1}{\sigma_i^2}\right.$ denote the weighted mean. We can rewrite our
+estimate for the slope
+\begin{equation*}
+  \hat{\beta}_1 = \frac{\sum_{i=1}^n\frac{1}{\sigma_i^2}\left(x_i - \bar{x}\right)\left(y_i - \bar{y}\right)}
+  {\sum_{i=1}^n\frac{1}{\sigma_i^2}\left(x_i - \bar{x}\right)^2}
+  =
+  \frac
+  {
+    \sum_{i=1}^n\frac{1}{\sigma_i^2}\sum_{j=1}^n\frac{1}{\sigma_j^2}\sum_{k=1}^n\frac{1}{\sigma_k^2}
+    \left(x_i - x_j\right)\left(y_i - y_k\right)
+  }
+  {
+    \sum_{i=1}^n\frac{1}{\sigma_i^2}\sum_{j=1}^n\frac{1}{\sigma_j^2}\sum_{k=1}^n\frac{1}{\sigma_k^2}
+    \left(x_i - x_j\right)\left(x_i - x_k\right)
+  }.
+\end{equation*}
+
+Now with some algebra,
+\begin{align*}
+  \sum_{i=1}^n\frac{1}{\sigma_i^2}\sum_{j=1}^n\frac{1}{\sigma_j^2}\sum_{k=1}^n\frac{1}{\sigma_k^2}
+  \left(x_i - x_j\right)\left(y_i - y_k\right)
+  &= \sum_{j=1}^n\frac{1}{\sigma_j^2}\sum_{i=1}^n\frac{1}{\sigma_i^2}\sum_{k=1}^n\frac{1}{\sigma_k^2}
+    \left(x_i - x_j\right)\left(y_i - y_k\right) \\
+  &= \left(\sum_{k=1}^n\frac{1}{\sigma_k^2}\right)
+    \sum_{i=1}^n\frac{1}{\sigma_i^2}\sum_{j=1}^n\frac{1}{\sigma_j^2}
+    \left(x_i - x_j\right)y_i \\
+  &= \frac{1}{2}\left(\sum_{k=1}^n\frac{1}{\sigma_k^2}\right)
+    \sum_{i=1}^n\frac{1}{\sigma_i^2}\sum_{j=1}^n\frac{1}{\sigma_j^2}
+    \left(x_i - x_j\right)\left(y_i - y_j\right),
+\end{align*}
+where the last two steps take advantage of the symmetry of the $i$ and $j$
+indices. Using this result, we have can write our slope estimate
+\begin{align*}
+  \hat{\beta}_1
+  &=
+    \frac{\sum_{i=1}^n\frac{1}{\sigma_i^2}\sum_{j=1}^n\frac{1}{\sigma_j^2}
+    \left(x_i - x_j\right)\left(y_i - y_j\right)}
+  {\sum_{i=1}^n\frac{1}{\sigma_i^2}\sum_{j=1}^n\frac{1}{\sigma_j^2}
+    \left(x_i - x_j\right)^2} \\
+  &= \boxed{\left.
+    \sum_{i=1}^n\sum_{\substack{j=1 \\ x_i \neq x_j}}^n \left(\frac{\left(x_i - x_j\right)^2}{\sigma_i^2\sigma_j^2}\right)
+    \left(\frac{y_i - y_j}{x_i - x_j}\right)
+    \middle/
+    \sum_{i=1}^n\sum_{j=1}^n \frac{\left(x_i - x_j\right)^2}{\sigma_i^2\sigma_j^2}
+    \right..}
+\end{align*}
+
+Thus, the unnormalized weight for the slope between $i$ and $j$ is
+$\boxed{\displaystyle \frac{\left(x_i - x_j\right)^2}{\sigma_i^2\sigma_j^2}.}$
+The normalized weights are
+$\boxed{\displaystyle w_{ij} = \left.\frac{\left(x_i - x_j\right)^2}{\sigma_i^2\sigma_j^2}
+    \middle/\sum_{i=1}^n\sum_{j=1}^n \frac{\left(x_i - x_j\right)^2}{\sigma_i^2\sigma_j^2}\right..}$
+
+Intuitively, this make sense. As $\sigma_i^2$ and $\sigma_j^2$ increase, the
+weight decreases since our estimated slope is noisier. On the other hand, as
+$(x_i - x_j)^2$ increases the weight increases because the slope estimate
+becomes more robust to noise since the effect size is larger. To see this
+mathematically, note that
+$\frac{y_i - y_j}{x_i - x_j} = \beta_1 + \frac{\sigma_i\epsilon_i -
+  \sigma_j\epsilon_j}{x_i - x_j}$, where
+$\epsilon_i \sim \mathcal{N}\left(0,1\right)$. The error term increases in
+magnitude as a function of $\sigma_i^2$ and $\sigma_j^2$ and decreases in
+magnitude as a function of $(x_i - x_j)^2$.
+\end{description}
 {\item Now consider what the weights would be in an ``average slope''
 representation for the optimal GLS estimate of $\beta_1$, for a general covariance matrix $\bSigma$.  Give some properties of the weights that you would expect to hold.  In answering this question, it might be helpful to think about how the weights would change as you vary individual entries in $\bSigma$.
 Also discuss any situations where you would expect the weight for a particular pair of observations to 
 be infinite or zero.  Note that you are {\bf not} asked to derive an average slope representation for GLS.}
+
+\begin{description}
+\item[Solution:] Let $\mathbf{1}$ be a vector a in $\mathbb{R}^n$ of all
+  $1$s. Denote the weighted mean,
+  $\bar{x} =
+  \left.\mathbf{1}^\intercal\Sigma^{-1}x\middle/\mathbf{1}^\intercal\Sigma^{-1}\mathbf{1}\right.$
+  Denote the centered vector, $\tilde{x} = x - \bar{x}\mathbf{1}$.
+
+  Then, we have that
+  \begin{equation}
+    \hat{\beta}_1 = \frac{\tilde{x}^\intercal\Sigma^{-1}\tilde{y}}{\tilde{x}^\intercal\Sigma^{-1}\tilde{x}}
+    = \left.
+      \sum_{i=1}^n\sum_{j=1}^n \Sigma^{-1}_{ij}\tilde{x}_i\tilde{y}_j
+      \middle/
+      \sum_{i=1}^n\sum_{j=1}^n \Sigma^{-1}_{ij}\tilde{x}_i\tilde{x}_j.
+      \right.
+    \end{equation}
+
+    Let $\Delta \in \mathbb{R}^{n \times n}$ be the skew-symmetric matrix where
+    $\Delta_{ij} = x_i - x_j$. Let $\Sigma_i$ denote the $i$th row or column of
+    the covariance matrix (the matrix is symmetric). We can rewrite our slope
+    estimate as
+    \begin{equation*}
+      \hat{\beta}_1 = \left.\sum_{i=1}^n\sum_{\substack{j=1 \\ x_i \neq x_j}}^n
+      \frac{y_i - y_j}{x_i - x_j}\left(x_i - x_j\right)\operatorname{tr}\left(
+      \Delta\Sigma_i^{-1}\left(\Sigma_j^{-1}\right)^\intercal
+    \right)
+    \middle/
+    \sum_{i=1}^n\sum_{j=1}^n\left(x_i - x_j\right)\operatorname{tr}\left(
+      \Delta\Sigma_i^{-1}\left(\Sigma_j^{-1}\right)^\intercal
+    \right),\right.
+    \end{equation*}
+    where $\operatorname{tr}$ is the trace operator. Since
+    \begin{align}
+      -\left(x_i - x_j\right)\operatorname{tr}\left(
+        \Delta\Sigma_i^{-1}\left(\Sigma_j^{-1}\right)^\intercal
+      \right) 
+      &= \left(x_i - x_j\right)\sum_{k=1}^n\sum_{l=1}^n
+        \left(x_k - x_l\right)\Sigma_{ik}^{-1}\Sigma_{jl}^{-1} \nonumber \\
+      &= \left(x_i - x_j\right)\sum_{k=1}^n\sum_{l=k + 1}^n
+        \left(x_k - x_l\right)\det\begin{pmatrix}
+          \Sigma_{ik}^{-1} & \Sigma_{il}^{-1} \\
+          \Sigma_{jk}^{-1} & \Sigma_{jl}^{-1}
+        \end{pmatrix},
+    \end{align}
+    we can see the pairwise slopes are weighted according to the entries from
+    the precision matrix. Moreover, the situation differs from the independent
+    case in that the weight of each slope depends on all possible pairwise
+    differences $x_j - x_l$, which intuitively makes sense since there may be
+    some correlation with the other observations.
+
+    Let $\tilde{\rho}_{ij}$ be the partial correlation coefficient between $Y_i$
+    and $Y_j$ given the remaining $Y_k$. The partial correlation measures the
+    correlation between observations controlling for cofounders. Entries of the
+    precision matrix are the scaled partial correlations,
+    $\Sigma_{ij}^{-1} = \tilde{\rho}_{ij}\sqrt{\Sigma_{ii}^{-1}\Sigma_{jj}^{-1}}$.
+
+    With this identity, we can rewrite unnormalized weights for the slope
+    estimate
+    \begin{equation}
+      -\left(x_i - x_j\right)\operatorname{tr}\left(
+        \Delta\Sigma_i^{-1}\left(\Sigma_j^{-1}\right)^\intercal
+      \right) = \left(x_i - x_j\right)
+      \Sigma_{ii}^{-1}\Sigma_{jj}^{-1}
+      \sum_{k=1}^n\sum_{l=k + 1}^n
+      \left(x_k - x_l\right)\det\begin{pmatrix}
+        \tilde{\rho}_{ik} & \tilde{\rho}_{il} \\
+        \tilde{\rho}_{jk} & \tilde{\rho}_{jl}
+        \end{pmatrix},
+        \label{eqn:p2_slope_correlation}
+    \end{equation}
+    
+    Equation \ref{eqn:p2_slope_correlation} gives us insight into how the
+    covariance matrix $\Sigma$ affects the weights for the pairwise slope
+    between observations $i$ and $j$.
+
+    As before, large differences $x_i - x_j$ increase the magnitude of the
+    weight, and large variances, manifested as small entries of
+    $\Sigma_{ii}^{-1}$ and $\Sigma_{jj}^{-1}$, decrease the magnitude of the
+    weight. Now, the differences $x_j - x_l$ also affect the weight in a similar
+    manner to $x_i - x_j$. The partial correlation coefficients govern the
+    degree of this effect. If there is no partial correlation, that is,
+    $\tilde{\rho}_{ik} = 0$ and $\tilde{\rho}_{il} = 0$ or
+    $\tilde{\rho}_{jk} = 0$ and $\tilde{\rho}_{jl} = 0$, then the term involving
+    $x_{k} - x_{l}$ is zeroed out. Of course, when the observations are
+    independent only the terms with $\left(k,l\right) = \left(i,j\right)$ or
+    $\left(k,l\right) = \left(j,i\right)$ are nonzero, and we recover the same
+    weights as the previous part.
+  \end{description}
 \end{enumerate} 
 
 
@@ -371,5 +563,8 @@ This involves some fairly careful thinking about misspecified mean models and wh
 for sandwich estimation to be valid.}
 \end{enumerate} 
 
+\section*{Appendix}
+
+Code for fitting models and generating plots is attached.
 
 \end{document}

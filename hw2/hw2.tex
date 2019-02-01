@@ -285,7 +285,45 @@ The variables you will need to pay attention to are:
 \eeas}
 \begin{enumerate}[(a)]
 {\em \item Fit an overdispersed logistic regression model with only an intercept to the Bernoulli version of these data (i.e., one binary observation for each child, at each visit).  What is the estimated dispersion factor?  What can you say theoretically about the dispersion factor?  If there is a difference between the theoretical
-and estimated values, how can you explain it?}
+  and estimated values, how can you explain it?}
+
+\begin{description}
+\item[Solution:] Let there be $n = 275$ subjects. Suppose each subject $i$ has
+  $m_i$ observations. Let $Y_{ij} \in \left\{0, 1\right\}$ where
+  $j \in \left\{1,2,\ldots,m_i\right\}.$
+
+  In this case, we are just fitting the model
+  \begin{align*}
+    Y_{ij}
+    &\sim \operatorname{Bernoulli}\left(p\right) \\
+    p
+    &= \frac{1}{1 + \exp\left(-\beta_0\right)}
+    \Rightarrow  \log\frac{p}{1 - p}
+    = \beta_0.
+  \end{align*}
+  
+  We'd estimate that
+  $\hat{p} = \left.\sum_{i=1}^n\sum_{j=1}^{m_i}y_i\middle/\sum_{i=1}^n
+    m_i\right. \approx \boxed{0.0892}$ and that $\hat{\beta}_0 \approx -2.324$.
+
+  We'd have that $\mathbb{E}\left[\hat{p}\right] = p$ and
+  $\operatorname{var}\left(\hat{p}\right) = \frac{p\left(1 -
+      p\right)}{\sum_{i=1}^{n}m_i}.$ It's as if we're just drawing one sample
+  from a binomial distribution, so the dispersion factor is just $1$.
+
+  Indeed, the estimated dispersion factor is
+  \begin{equation*}
+    \hat{\alpha} =
+    \left.
+      \sum_{i=1}\sum_{j=1}^{m_i} \frac{\left(y_{ij} - \hat{p}\right)^2}{\hat{p}\left(1 - \hat{p}\right)}
+      \middle/\left(
+      \sum_{i=1}^n m_i - 1\right)
+      \right. \approx 1.000834,
+    \end{equation*}
+    which agrees with the theoretical dispersion factor and will approach $1$
+    with increasing sample size.
+\end{description}
+
 {\em \item Now convert the data into binomial observations, by aggregating over all visits to obtain a single
 binomial outcome for each child.  Again fit an overdispersed logistic regression model with only an intercept, but this time do it using both quasi-likelihood and beta-binomial models.  Fit the beta-binomial model two 
 different ways,
@@ -294,8 +332,129 @@ and by direct optimization of the log-likelihood.  For each
 of these three model fits, report the estimated overdispersion or correlation parameter (as appropriate) and
 calculate a corresponding 95\% confidence interval if this is possible without much additional work (i.e., if standard error
 estimates are reported or can be computed from a Hessian matrix).  Discuss how the point estimates for overdispersion/correlation from these three model fits relate to each other.}
+
+\begin{description}
+\item[Solution:] In this case, the binomial model is
+  \begin{align*}
+    Y_{i}
+    &\sim \operatorname{Binomial}\left(m_i, p\right) \\
+    p
+    &= \frac{1}{1 + \exp\left(-\beta_0\right)} \Rightarrow
+      \log\frac{p}{1 - p} = \beta_0.
+  \end{align*}
+
+  The log-likelihood function is
+  \begin{equation*}
+    l\left(\beta_0\right) = \sum_{i=1}^n\left(
+      \log{m_i \choose y_i} + y_i\log p + \left(m_i - y_i\right)\log\left(1 - p\right)
+    \right),
+  \end{equation*}
+  so the score function is
+  \begin{align*}
+    S\left(\beta_0\right)
+    &= \sum_{i=1}^n\left(\frac{y_i}{p} - \frac{m_i - y_i}{1 - p}\right)\frac{\mathrm{d}p}{\mathrm{d}\beta_0}
+      = \frac{\mathrm{d}p}{\mathrm{d}\beta_0}\sum_{i=1}^n\frac{y_i - pm_i}{p\left(1 - p\right)}.
+  \end{align*}
+  The expected information matrix can be computed
+  \begin{equation*}
+    I_n\left(\beta_0\right) = \operatorname{var}\left(S\left(p\right)\right)
+    = \left(\frac{\mathrm{d}p}{\mathrm{d}\beta_0}\right)^2\sum_{i=1}^n\frac{m_i}{p\left(1 - p\right)}
+    = p^4\exp\left(-2\beta_0\right)\sum_{i=1}^n\frac{m_i}{p\left(1 - p\right)}.
+  \end{equation*}
+  
+  Solving $S\left(\hat{p}\right) = 0$ gives that
+  $\hat{p} = \left.\sum_{i=1}^n\sum_{j=1}^{m_i}y_i\middle/\sum_{i=1}^n
+    m_i\right. \approx \boxed{0.0892}$ and that $\hat{\beta}_0 \approx -2.324$
+  just as before. In this case, the dispersion factor differs:
+  \begin{equation*}
+    \hat{\alpha} =
+    \left.
+      \sum_{i=1}\frac{\left(y_{i} - m_i\hat{p}\right)^2}{m_i\hat{p}\left(1 - \hat{p}\right)}
+      \middle/\left(n - 1\right)
+    \right. \approx 1.3462872,
+  \end{equation*}
+  so we have evidence of overdispersion. The variance of $\hat{\beta}_0$ is then
+  $\hat{\alpha}I_n^{-1}\left(\hat{p}\right) \approx 0.013814$, so we have the 95\% confidence
+  interval for $\beta_0$, $\left[-2.554212, -2.09349\right]$.
+
+  The beta-binomial model makes different assumptions:
+  \begin{align*}
+    Y_{i}
+    &\sim \operatorname{Binomial}\left(m_i, p_i\right) \\
+    p_i
+    &\sim \operatorname{Beta}\left(\alpha, \beta\right),
+  \end{align*}
+  where we can parameterize $\alpha$ and $\beta$ in terms of
+  $\mathbb{E}\left[p_i\right] = \mu$ and within-cluster correlation $\rho$ as
+  \begin{align*}
+    \mu &= \frac{\alpha}{\alpha + \beta} \Rightarrow \alpha = \mu\frac{1 - \rho}{\rho} \\
+    \rho &= \frac{1}{1 + \alpha + \beta} \Rightarrow \beta = \left(1 - \mu\right)\frac{1 - \rho}{\rho}.
+  \end{align*}
+
+  Let $B$ be the beta function. The log-likelihood function is now
+  \begin{align*}
+    l\left(\mu, \rho\right)
+    = \sum_{i=1}^n\left(\log{m_i \choose y_i}
+    + \log B\left(\alpha + y_i, \beta + m_i - y_i \right)
+    - \log B\left(\alpha, \beta\right)
+    \right).
+  \end{align*}
+  Let $\psi$ be the digamma function. The score function is then
+  \begin{align*}
+    S\left(\mu,\rho\right)
+    &= \begin{pmatrix}
+      \frac{\partial\alpha}{\partial\mu} & \frac{\partial\beta}{\partial\mu} \\
+      \frac{\partial\alpha}{\partial\rho} & \frac{\partial\beta}{\partial\rho}
+    \end{pmatrix}\sum_{i=1}^n\begin{pmatrix}
+      \displaystyle
+        \psi\left(\alpha + y_i\right)
+        -
+        \psi\left(\alpha + \beta + m_i\right)
+        -
+      \left(
+        \psi\left(\alpha\right) - \psi\left(\alpha + \beta\right)
+      \right) \\
+      \displaystyle
+        \psi\left(\beta + m_i - y_i \right)
+        -
+        \psi\left(\alpha + \beta + m_i\right)
+        -
+      \left(
+        \psi\left(\beta\right) - \psi\left(\alpha + \beta\right)
+      \right)
+    \end{pmatrix}
+  \end{align*}
+
+  If we let $\operatorname{logit}\left(\mu\right) = \gamma_{\mu,0}$ and
+  $\operatorname{logit}\left(\rho\right) = \gamma_{\rho,0}$, both \texttt{vglm}
+  and numerical optimization find that
+  \begin{align*}
+    \hat{\mu} = 0.0901559 &\Rightarrow \hat{\gamma}_{\mu,0} = -2.31173 \\
+    \hat{\rho} = 0.082218 &\Rightarrow \hat{\gamma}_{\rho,0} = -2.4126.
+  \end{align*}
+  The 95\% confidence interval using the standard errors reported by
+  \texttt{vglm} are $\left[-2.53886, -2.08454\right]$ for $\gamma_{\mu,0}$ and
+  $\left[-3.23343, -1.5918\right]$ for $\gamma_{\rho,0}$. The dispersion factor
+  for each $i$ is then $\hat{\alpha}_i = 1 + \hat{\rho}\left(m_i - 1\right)$.
+\end{description}
 {\em \item Repeat all of the steps in part (b), but this time include a linear term for baseline age 
-in the mean component of the logistic regression model.}
+  in the mean component of the logistic regression model.}
+
+\begin{description}
+\item[Solution:] The steps are largely the same. However, in the binomial model,
+  we now have that $\operatorname{logit}\left(p_i\right) = \beta_0 + \beta_1x_i$, where $x_i$ is the
+  \texttt{baseage} for subject $i$.
+
+  For $\beta_0$, we obtain the estimate $\hat{\beta}_0 = -2.549413$ and 95\%
+  confidence interval $\left[-2.8156, -2.2832\right]$. For $\beta_1$, we obtain
+  the estimate $\hat{\beta}_1 = -0.0275$ and 95\% confidence interval
+  $\left[-0.04, -0.015\right]$. The dispersion factor has estimate
+  $\hat{\alpha} = 1.196207$.
+
+  In the beta-binomial model, we have that
+  % $\operatorname{logit}\left(\mu\right) = $
+\end{description}
+
 {\em \item Discuss the main differences between your findings in parts (b) and (c).}
 \end{enumerate}
 

@@ -45,7 +45,8 @@ RUN R -e "install.packages(\
 
 RUN R -e "install.packages(c(\
     'data.table',\
-    'lasso2'),\
+    'lasso2',\
+    'VGAM'),\
   repos='http://cran.us.r-project.org',\
   dep=TRUE);"
 

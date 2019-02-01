@@ -11,6 +11,7 @@
 \usepackage{bm}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{pdfpages}
 \newcommand*{\justifyheading}{\raggedleft}
 
 
@@ -212,10 +213,13 @@ Explain which of these approaches will lead to asymptotically valid confidence i
     distribution
     $\hat{\gamma} \sim \mathcal{N}\left(\gamma,
       \left(X^{\star\intercal}X^\star\right)^{-1}X^{\star\intercal}\Sigma
-      X^{\star}\left(X^{\star\intercal}X^\star\right)^{-1}\right)$. We would
-    only get valid asymptotic standard errors if $\Sigma_i = \sigma^2I$ for all
-    $I$ if we were to use the usual OLS estimate for standard errors,
-    $\hat{\sigma}^2\left(X^{\star\intercal} X^\star\right)^{-1}$.
+      X^{\star}\left(X^{\star\intercal}X^\star\right)^{-1}\right)$.
+
+    In general, we would not get valid asymptotic standard errors if we were to
+    use the usual OLS estimate for variance,
+    $\hat{\sigma}^2\left(X^{\star\intercal} X^\star\right)^{-1}$. In the
+    special case that $\Sigma_i = \sigma^2I$ for all $i$, we would get valid
+    asymptotic standard errors.
   \item The sandwich estimator produces valid standard errors only if
     we choose $\hat{\Sigma}$ such that $\hat{\Sigma} \rightarrow \Sigma$. One
     way to do this is to use the assumption that each cluster has the same
@@ -241,7 +245,7 @@ Explain which of these approaches will lead to asymptotically valid confidence i
           Z_i\right)^{-1}\right)_{22}\right),$$ and are independent since each
     cluster is independent.
     
-    In the second state, we regress on $\hat{\alpha}_{1i}$. While each response
+    In the second stage, we regress on $\hat{\alpha}_{1i}$. While each response
     observation is independent, the errors are not identically distributed, so
     in general, our standard errors would not be valid.
   \item Sandwich estimation deals with heteroscedasticity by taking the sample
@@ -467,8 +471,29 @@ estimates are reported or can be computed from a Hessian matrix).  Discuss how t
 \end{description}
 
 {\em \item Discuss the main differences between your findings in parts (b) and (c).}
+
+\begin{description}
+\item[Solution:] All coefficient estimates were statistically significant at
+  level $0.05$ since none of the confidence intervals include $0$.
+
+  In part (b) there is more dispersion than part (c), whether estimated through
+  the dispersion factor $\hat{\alpha}$ in the binomial model or within-cluster
+  correlation $\hat{\rho}$. By including \texttt{baseage} as a covariate, we're
+  accounting for more of the difference between clusters. Without the covariate,
+  the differences between subjects is either accounted by the dispersion factor
+  or explained away by within-cluster correlation.
+
+  It's also somewhat notable that the standard errors for the intercept terms
+  increase in part (c) since estimating more parameters introduces variance.
+\end{description}
 \end{enumerate}
 
+\section*{Appendix}
 
+The models were fit in R. The parameter estimates for the beta-binomial model
+were verified in Python by numerically maximizing the log-likelihood function.
+
+\includepdf[pages=-]{ichs_R.pdf}
+\includepdf[pages=-]{ichs_beta_binomial.pdf}
 
 \end{document}

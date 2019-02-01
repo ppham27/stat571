@@ -391,18 +391,26 @@ estimates are reported or can be computed from a Hessian matrix).  Discuss how t
     \rho &= \frac{1}{1 + \alpha + \beta} \Rightarrow \beta = \left(1 - \mu\right)\frac{1 - \rho}{\rho}.
   \end{align*}
 
-  Let $B$ be the beta function. The log-likelihood function is now
+
+  Let $\operatorname{logit}\left(\mu\right) = \gamma_{\mu,0}$ and
+  $\operatorname{logit}\left(\rho\right) = \gamma_{\rho,0}$. Let $B$ be the beta
+  function. The log-likelihood function is now
   \begin{align*}
-    l\left(\mu, \rho\right)
+    l\left(\gamma_{\mu,0}, \gamma_{\rho,0}\right)
     = \sum_{i=1}^n\left(\log{m_i \choose y_i}
     + \log B\left(\alpha + y_i, \beta + m_i - y_i \right)
     - \log B\left(\alpha, \beta\right)
     \right).
   \end{align*}
   Let $\psi$ be the digamma function. The score function is then
+  {\scriptsize
   \begin{align*}
-    S\left(\mu,\rho\right)
-    &= \begin{pmatrix}
+    S\left(\gamma_{\mu,0}, \gamma_{\rho,0}\right)
+    &= \left.D_\gamma^\intercal\left(\begin{pmatrix}
+        \mu \\ \rho
+      \end{pmatrix}
+      \right)\right|_{\gamma_{\mu,0}, \gamma_{\rho,0}}
+      \begin{pmatrix}
       \frac{\partial\alpha}{\partial\mu} & \frac{\partial\beta}{\partial\mu} \\
       \frac{\partial\alpha}{\partial\rho} & \frac{\partial\beta}{\partial\rho}
     \end{pmatrix}\sum_{i=1}^n\begin{pmatrix}
@@ -422,12 +430,10 @@ estimates are reported or can be computed from a Hessian matrix).  Discuss how t
       \left(
         \psi\left(\beta\right) - \psi\left(\alpha + \beta\right)
       \right)
-    \end{pmatrix}
-  \end{align*}
+    \end{pmatrix}.
+  \end{align*}}
 
-  If we let $\operatorname{logit}\left(\mu\right) = \gamma_{\mu,0}$ and
-  $\operatorname{logit}\left(\rho\right) = \gamma_{\rho,0}$, both \texttt{vglm}
-  and numerical optimization find that
+  Both \texttt{vglm} and numerical optimization find that
   \begin{align*}
     \hat{\mu} = 0.0901559 &\Rightarrow \hat{\gamma}_{\mu,0} = -2.31173 \\
     \hat{\rho} = 0.082218 &\Rightarrow \hat{\gamma}_{\rho,0} = -2.4126.
@@ -451,8 +457,13 @@ estimates are reported or can be computed from a Hessian matrix).  Discuss how t
   $\left[-0.04, -0.015\right]$. The dispersion factor has estimate
   $\hat{\alpha} = 1.196207$.
 
-  In the beta-binomial model, we have that
-  % $\operatorname{logit}\left(\mu\right) = $
+  In the beta-binomial model, we now let $\mu$ vary among subects, that is,
+  $\operatorname{logit}\left(\mu_i\right) = \gamma_{\mu,0} + \gamma_{\mu,0}x_i.$
+  $\hat{\gamma}_{\mu,0} = -2.521$ with 95\% confidence interval
+  $\left[-2.7857, -2.2561\right]$, $\hat{\gamma}_{\mu,1} = -0.026456$ with 95\%
+  confidence interval $\left[-0.03881, -0.0141\right]$.
+  $\hat{\gamma}_{\rho,0} = -2.707920$ with 95\% confidence interval
+  $\left[-3.7018, -1.714\right]$, so $\hat{\rho} = 0.06251$.
 \end{description}
 
 {\em \item Discuss the main differences between your findings in parts (b) and (c).}

@@ -1,0 +1,173 @@
+\documentclass[11pt, letterpaper]{article}
+\setlength{\parindent}{0in}
+\setlength{\textheight}{8.7in}
+\setlength{\textwidth}{6.8in}
+\setlength{\oddsidemargin}{-0.3in}
+\setlength{\evensidemargin}{0.0in}
+\addtolength{\topmargin}{-1in}
+\setlength{\parskip}{0.1in}
+
+\usepackage{amsmath, amsfonts, color}
+\usepackage{bm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\newcommand*{\justifyheading}{\raggedleft}
+
+
+\renewcommand{\baselinestretch}{1.0}
+
+\newcommand{\bx}{{\bm x}}
+\newcommand{\bX}{{\bm X}}
+\newcommand{\by}{{\bm y}}
+\newcommand{\bY}{{\bm Y}}
+\newcommand{\bW}{{\bm W}}
+\newcommand{\bG}{{\bm G}}
+\newcommand{\bR}{{\bm R}}
+\newcommand{\bZ}{{\bm Z}}
+\newcommand{\bV}{{\bm V}}
+\newcommand{\bL}{{\bm L}}
+\newcommand{\bz}{{\bm z}}
+\newcommand{\be}{{\bm e}}
+\newcommand{\bgamma}{{\bm \gamma}}
+\newcommand{\bbeta}{{\bm \beta}}
+\newcommand{\balpha}{{\bm \alpha}}
+\newcommand{\bSigma}{{\bm \Sigma}}
+\newcommand{\bmu}{{\bm \mu}}
+\newcommand{\btheta}{{\bm \theta}}
+\newcommand{\bepsilon}{{\bm \epsilon}}
+\newcommand{\bone}{{\bm 1}}
+\newcommand{\bzero}{{\bm 0}}
+\newcommand{\bC}{{\bm C}}
+\newcommand{\bI}{{\bm I}}
+\newcommand{\bA}{{\bm A}}
+\newcommand{\bB}{{\bm B}}
+\newcommand{\bQ}{{\bm Q}}
+\newcommand{\bS}{{\bm S}}
+\newcommand{\bD}{{\bm D}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cL}{\mathcal{L}}
+
+\newcommand{\beas}{\begin{eqnarray*}}
+\newcommand{\eeas}{\end{eqnarray*}}
+
+\newenvironment{equationarrayright}{
+                          \begin{eqnarray*}
+                          \begin{array}{rcll}
+                         }{
+                          \end{array}
+                          \end{eqnarray*}
+                         }
+\newcommand{\bear}{\begin{equationarrayright}}
+\newcommand{\eear}{\end{equationarrayright}}
+
+\renewcommand\arraystretch{1.3}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{STAT/BIOST 571: Homework 3}
+\author{Philip Pham}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem 1: Quasilikelihood and semiparametric methods for the general linear model (14 points)}
+{\em This question examines the effect of different correlation structures, designs, and sample sizes in fitting a general linear model in a quasi-likelihood and semiparametric framework.  It is also an exercise in writing code systematically; please take care to break the required programming into small tasks, and write individual functions to do each of these tasks.
+Please write all code ``by hand'', using matrix algebra and simple moment-based estimators.  
+You may find the \texttt{mvtnorm} package helpful.
+
+For the marginal model
+\[
+E(Y_{ij}|x_{ij}) = \beta_0 + \beta_1 x_{ij},
+\]
+consider estimation by weighted least squares, where the cluster weights are the inverse of
+the estimated cluster covariance matrix.  Calculate quasi-likelihood standard errors as if your assumed form
+of the covariance matrix
+is known to be correct (even if, in actuality, you have assumed the wrong form of the covariance) and semi-parametric  standard errors using the sandwich estimator that accounts for clustering.
+All of the notation follows the lecture notes. 
+
+Throughout, the following are true in the data-generating mechanism
+\begin{itemize}
+\item $\beta_0=0$, $\beta_1 = 0.5$
+\item $\bY_i|\bX_i\sim N(\bX_i \bbeta, \sigma^2 \bR_i)$ with $\sigma^2=1$. 
+\end{itemize}
+The factors that will vary are
+\begin{itemize}
+\item The number of clusters is 15, 30, or 60
+\item The design: \begin{itemize}
+\item Design I has $m_i = 4$, for all clusters. In each cluster, we see $\{x_{i1}, x_{i2},x_{i3},x_{i4}\}=\{7,10,13,16\}$
+\item Design II has $m_i=3$ for all clusters.  We see equal numbers of clusters with $\{x_{i1}, x_{i2},x_{i3}\}=\{7,10,13\}, \{7,10,16\}, \{7, 13, 16\}, \textrm{ or }\{10, 13, 16\}$
+\end{itemize}
+\item The true covariance and the assumed covariance matrices are of the form $\sigma^2 \bR_i$:
+\begin{itemize}
+\item For the true covariance, consider exchangeable and exponential correlation structures, with $\rho=0.5$ or $\rho=0.9$ (distances between observations in the exponential model based on $x_{ij}$). 
+\item For the assumed covariance, consider these and additionally the uncorrelated homoscedastic covariance.  Any covariance parameters should be estimated  using moment-based methods.
+\end{itemize}
+\end{itemize}
+
+
+Present results in the table below, and write a paragraph or two summarizing your findings.
+
+\begin{center}
+\begin{tabular}{ccr|ccc|ccc|ccc}
+&&&\multicolumn{3}{|c}{$\mathbf{SD(\hat\beta_1)}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,QL})}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,sand})}$}\\
+&&&\multicolumn{3}{c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}\\
+$n$ & Design & True Corr & Uncor & Exch & Expon & Uncor & Exch & Expon & Uncor & Exch & Expon \\ \hline
+15 &  I & Exchangeable $\rho=0.5$ & & & & & & & & & \\
+15 &  I & Exchangeable $\rho=0.9$ & & & & & & & & & \\
+15 &  I &         Exponential $\rho=0.5$ & & & & & & & & & \\
+15 &  I &         Exponential $\rho=0.9$ & & & & & & & & & \\ [1ex]
+15 & II & Exchangeable $\rho=0.5$ & & & & & & & & & \\
+15 & II & Exchangeable $\rho=0.9$ & & & & & & & & & \\
+15 & II &         Exponential $\rho=0.5$ & & & & & & & & & \\
+15 & II &         Exponential $\rho=0.9$ & & & & & & & & & \\ [2ex]
+30 &  I & Exchangeable $\rho=0.5$ & & & & & & & & & \\
+30 &  I & Exchangeable $\rho=0.9$ & & & & & & & & & \\
+30 &  I &         Exponential $\rho=0.5$ & & & & & & & & & \\
+30 &  I &         Exponential $\rho=0.9$ & & & & & & & & & \\ [1ex]
+30 & II & Exchangeable $\rho=0.5$ & & & & & & & & & \\
+30 & II & Exchangeable $\rho=0.9$ & & & & & & & & & \\
+30 & II &         Exponential $\rho=0.5$ & & & & & & & & & \\
+30 & II &         Exponential $\rho=0.9$ & & & & & & & & & \\ [2ex]
+60 &  I & Exchangeable $\rho=0.5$ & & & & & & & & & \\
+60 &  I & Exchangeable $\rho=0.9$ & & & & & & & & & \\
+60 &  I &         Exponential $\rho=0.5$ & & & & & & & & & \\
+60 &  I &        Exponential $\rho=0.9$ & & & & & & & & & \\ [1ex]
+60 & II & Exchangeable $\rho=0.5$ & & & & & & & & & \\
+60 & II & Exchangeable $\rho=0.9$ & & & & & & & & & \\
+60 & II &         Exponential $\rho=0.5$ & & & & & & & & & \\
+60 & II &         Exponential $\rho=0.9$ & & & & & & & & & 
+\end{tabular}\\~\\
+\textbf{Table of standard deviations of the estimated slopes and 
+average of model-based and sandwich-based standard error estimates}
+\end{center}
+}
+
+\section*{Problem 2: Efficiency of OLS for linear models with correlated data (6 points)}
+{\em Review the example on slides 2.34 -- 2.35, which can also be found on pages 60 -- 62 of the Diggle et al. textbook.  We will generalize this example by considering the mean model
+\[
+E(Y_{ij}) = \beta_0 + \beta_1 x_j
+\]
+for arbitrary $\bx = (x_1,x_2,\ldots,x_5)$ that is the same for all subjects, but which may or may not
+be equal to ${\bm t}=(-2,-1,0,1,2)$ (as is the case in the original version of the example).
+Note that the correlation structure is still determined based on $t$, as in the original example, but now the mean model contains $x$ rather than $t$.}
+\begin{enumerate}[(a)]
+{\em \item Derive a general expression for the relative efficiency of OLS compared to the optimal GLS in estimating $\beta_0$ and $\beta_1$ in this problem.  Your formula should be valid for a homoscedastic exponential covariance matrix with arbitrary
+$\rho$ and for arbitrary $\bx$.  That is, derive a general version of the expressions
+on the bottom of 2.44 that is valid for any choice of covariates.  Note that it is acceptable for your solution to be written using matrix notation and matrix algebra.}
+{\em \item Reproduce the lines in the table on 2.35 that pertain to $\beta_1$ for the following choices of covariate vectors
+\beas
+\bx&=&(-2,-1,0,1,2)\\
+\bx&=&(-1,-2,0,2,1)\\
+\bx&=&(0,-1,1,3,2)\\
+\bx&=&(0,-1,1,5,2)
+\eeas}
+{\em \item Explain the key differences between the relative efficiencies you just calculated.  Phrase your answers in a manner that will be understandable by
+a quantitavely sophisticated non-statistician (e.g., an epidemiologist collaborator).
+}
+\end{enumerate} 
+
+\end{document}

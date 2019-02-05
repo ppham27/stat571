@@ -7,7 +7,7 @@
 \addtolength{\topmargin}{-1in}
 \setlength{\parskip}{0.1in}
 
-\usepackage{amsmath, amsfonts, color}
+\usepackage{amsmath, amsfonts, amssymb, color}
 \usepackage{bm}
 \usepackage{enumerate}
 \usepackage{graphicx}
@@ -106,12 +106,100 @@ The factors that will vary are
 \item For the true covariance, consider exchangeable and exponential correlation structures, with $\rho=0.5$ or $\rho=0.9$ (distances between observations in the exponential model based on $x_{ij}$). 
 \item For the assumed covariance, consider these and additionally the uncorrelated homoscedastic covariance.  Any covariance parameters should be estimated  using moment-based methods.
 \end{itemize}
-\end{itemize}
+\end{itemize}}
+
+\begin{description}
+\item[Solution:] See the results in Table \ref{tab:p1_results}.
+
+  Let $X_i$ be the covariates for each cluster with a column of $1$s
+  prepended. Let $y_i$ be the cluster responses.
+
+  We first estimate $\beta$ with the ordinary least squares (OLS) estimator,
+  $\hat{\beta}_{\mathrm{OLS}} = \left(X^\intercal X\right)^{-1}X^\intercal y$,
+  where $X$ is the concatenation of the cluster covariates and $y$ is the
+  concatenation of the cluster responses.
+  
+
+  We can get the covariances for $\hat{\beta}$ with
+  \begin{align*}
+    \operatorname{cov}\left(\hat{\beta}\right)
+    &= \left(\sum_{i=1}^n X_i^\intercal W X_i\right)^{-1}
+    \left(\sum_{i=1}^n X_i^\intercal W \hat{\Sigma} W X_i\right)
+    \left(\sum_{i=1}^n X_i^\intercal W X_i\right)^{-1}.
+  \end{align*}
+
+  For the different estimation methods and assumed covariances, we vary the form
+  of $\hat{\Sigma}$ and $W$, both of which are assumed to be the same for all
+  clusters.
+
+  To obtain $W$, we first estimate $\sigma^2$ with
+  \begin{equation}
+    \hat{\sigma}^2 = \frac{1}{\sum_{i=1}^nm_i - 2}\sum_{i=1}^n
+    \left(y_{i} - X_{i}\hat{\beta}_{\mathrm{OLS}}\right)^\intercal
+    \left(y_{i} - X_{i}\hat{\beta}_{\mathrm{OLS}}\right).
+  \end{equation}
 
 
-Present results in the table below, and write a paragraph or two summarizing your findings.
+  Let the standardized OLS residuals for each cluster be
+  $\tilde{\epsilon}_i = \frac{y_i -
+    X_i\hat{\beta}_{\mathrm{OLS}}}{\hat{\sigma}}.$
 
-\begin{center}
+  If we assume that the correlation structure is exchangeable, we estimate
+  \begin{equation}
+    \hat{\rho}_{\mathrm{exch}} =
+    \frac{1}{\sum_{i=1}^n\sum_{j=1}^{m_i - 1} j}\sum_{i=1}^n\sum_{j=1}^{m_i - 1}\sum_{k=j + 1}^{m_i}
+    \left(\tilde{\epsilon}_i\tilde{\epsilon}_i^\intercal\right)_{jk},
+  \end{equation}
+  so $W^{-1}_{ii} = 1$ for all $i$ and
+  $W_{ij}^{-1} = \hat{\rho}_{\mathrm{exch}}$ for all $i \neq j$.
+
+  If we assume that the correlation structure is exponential, we estimate
+  \begin{equation} \hat{\rho}_{\mathrm{expon}} =
+    \frac{1}{\sum_{i=1}^n\sum_{j=1}^{m_i - 1}
+      j}\sum_{i=1}^n\sum_{j=1}^{m_i - 1}
+    \left(\tilde{\epsilon}_i\tilde{\epsilon}_i^\intercal\right)_{j,j+1},
+  \end{equation}
+  so
+  $W_{ij}^{-1} = \hat{\rho}_{\mathrm{expon}}^{\left\lvert j - i \right\rvert}$
+  for any $i$ and $j$.
+  
+  If we don't assume any correlation structure, $W = I$.
+
+  Now that we know $W$, we can estimate $\beta$ with
+  \begin{equation}
+    \hat{\beta} = \frac{1}{\sum_{i=1}^nm_i}\sum_{i=1}^nm_i\left(X_i^\intercal W X_i\right)^{-1} X_i^\intercal W y_i.
+  \end{equation}
+  
+  By default, for the general linear model, we would have that
+  $\hat{\Sigma} = \hat{\sigma}^2 W^{-1}$, in which case, we have that
+  \begin{equation}
+    \operatorname{cov}\left(\hat{\beta}\right)
+    = \hat{\sigma}^2 \left(\sum_{i=1}^n X_i^\intercal W X_i\right)^{-1}.
+  \end{equation}
+
+  In the quasi-likelihood model, we have an additional dispersion factor
+  $\alpha$, so $\hat{\Sigma} = \hat{\alpha}\hat{\sigma}^2 W^{-1}$, where
+  \begin{equation}
+    \hat{\alpha} = \frac{1}{\hat{\sigma}^2\left(\sum_{i=1}^n m_i - 2\right)}
+    \left(y - X\hat{\beta}\right)^\intercal\left(y - X\hat{\beta}\right),
+  \end{equation}
+  which results in the covariance
+  \begin{equation}
+    \operatorname{cov}\left(\hat{\beta}\right)
+    = \hat{\alpha}\hat{\sigma}^2 \left(\sum_{i=1}^n X_i^\intercal W X_i\right)^{-1}.
+  \end{equation}
+
+  For the sandwich estimator, we use the empirical estimate
+  \begin{equation}
+    \hat{\Sigma} = \frac{1}{n}\sum_{i=1}^n
+    \left(y_i - X_i\hat{\beta}\right)^\intercal \left(y_i - X_i\hat{\beta}\right).
+  \end{equation}
+  
+\end{description}
+
+\begin{table}
+  \scriptsize
+\centering
 \begin{tabular}{ccr|ccc|ccc|ccc}
 &&&\multicolumn{3}{|c}{$\mathbf{SD(\hat\beta_1)}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,QL})}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,sand})}$}\\
 &&&\multicolumn{3}{c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}\\
@@ -140,11 +228,11 @@ $n$ & Design & True Corr & Uncor & Exch & Expon & Uncor & Exch & Expon & Uncor &
 60 & II & Exchangeable $\rho=0.9$ & & & & & & & & & \\
 60 & II &         Exponential $\rho=0.5$ & & & & & & & & & \\
 60 & II &         Exponential $\rho=0.9$ & & & & & & & & & 
-\end{tabular}\\~\\
-\textbf{Table of standard deviations of the estimated slopes and 
-average of model-based and sandwich-based standard error estimates}
-\end{center}
-}
+\end{tabular}
+\caption{Table of standard deviations of the estimated slopes and 
+  average of model-based and sandwich-based standard error estimates}
+\label{tab:p1_results}
+\end{table}
 
 \section*{Problem 2: Efficiency of OLS for linear models with correlated data (6 points)}
 {\em Review the example on slides 2.34 -- 2.35, which can also be found on pages 60 -- 62 of the Diggle et al. textbook.  We will generalize this example by considering the mean model

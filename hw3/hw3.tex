@@ -171,22 +171,22 @@ The factors that will vary are
   \end{equation}
   
   By default, for the general linear model, we would have that
-  $\hat{\Sigma} = \hat{\sigma}^2 W^{-1}$, in which case, we have that
+  $\hat{\Sigma} = W^{-1}$, in which case, we have that
   \begin{equation}
     \operatorname{cov}\left(\hat{\beta}\right)
-    = \hat{\sigma}^2 \left(\sum_{i=1}^n X_i^\intercal W X_i\right)^{-1}.
+    = \left(\sum_{i=1}^n X_i^\intercal W X_i\right)^{-1}.
   \end{equation}
 
   In the quasi-likelihood model, we have an additional dispersion factor
-  $\alpha$, so $\hat{\Sigma} = \hat{\alpha}\hat{\sigma}^2 W^{-1}$, where
+  $\alpha$, so $\hat{\Sigma} = \hat{\alpha}W^{-1}$, where
   \begin{equation}
-    \hat{\alpha} = \frac{1}{\hat{\sigma}^2\left(\sum_{i=1}^n m_i - 2\right)}
+    \hat{\alpha} = \frac{1}{\sum_{i=1}^n m_i - 2}
     \left(y - X\hat{\beta}\right)^\intercal\left(y - X\hat{\beta}\right),
   \end{equation}
   which results in the covariance
   \begin{equation}
     \operatorname{cov}\left(\hat{\beta}\right)
-    = \hat{\alpha}\hat{\sigma}^2 \left(\sum_{i=1}^n X_i^\intercal W X_i\right)^{-1}.
+    = \hat{\alpha} \left(\sum_{i=1}^n X_i^\intercal W X_i\right)^{-1}.
   \end{equation}
 
   For the sandwich estimator, we use the empirical estimate
@@ -198,36 +198,36 @@ The factors that will vary are
 \end{description}
 
 \begin{table}
-  \scriptsize
+  \tiny
 \centering
 \begin{tabular}{ccr|ccc|ccc|ccc}
 &&&\multicolumn{3}{|c}{$\mathbf{SD(\hat\beta_1)}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,QL})}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,sand})}$}\\
 &&&\multicolumn{3}{c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}\\
 $n$ & Design & True Corr & Uncor & Exch & Expon & Uncor & Exch & Expon & Uncor & Exch & Expon \\ \hline
-15 &  I & Exchangeable $\rho=0.5$ & & & & & & & & & \\
-15 &  I & Exchangeable $\rho=0.9$ & & & & & & & & & \\
-15 &  I &         Exponential $\rho=0.5$ & & & & & & & & & \\
-15 &  I &         Exponential $\rho=0.9$ & & & & & & & & & \\ [1ex]
-15 & II & Exchangeable $\rho=0.5$ & & & & & & & & & \\
-15 & II & Exchangeable $\rho=0.9$ & & & & & & & & & \\
-15 & II &         Exponential $\rho=0.5$ & & & & & & & & & \\
-15 & II &         Exponential $\rho=0.9$ & & & & & & & & & \\ [2ex]
-30 &  I & Exchangeable $\rho=0.5$ & & & & & & & & & \\
-30 &  I & Exchangeable $\rho=0.9$ & & & & & & & & & \\
-30 &  I &         Exponential $\rho=0.5$ & & & & & & & & & \\
-30 &  I &         Exponential $\rho=0.9$ & & & & & & & & & \\ [1ex]
-30 & II & Exchangeable $\rho=0.5$ & & & & & & & & & \\
-30 & II & Exchangeable $\rho=0.9$ & & & & & & & & & \\
-30 & II &         Exponential $\rho=0.5$ & & & & & & & & & \\
-30 & II &         Exponential $\rho=0.9$ & & & & & & & & & \\ [2ex]
-60 &  I & Exchangeable $\rho=0.5$ & & & & & & & & & \\
-60 &  I & Exchangeable $\rho=0.9$ & & & & & & & & & \\
-60 &  I &         Exponential $\rho=0.5$ & & & & & & & & & \\
-60 &  I &        Exponential $\rho=0.9$ & & & & & & & & & \\ [1ex]
-60 & II & Exchangeable $\rho=0.5$ & & & & & & & & & \\
-60 & II & Exchangeable $\rho=0.9$ & & & & & & & & & \\
-60 & II &         Exponential $\rho=0.5$ & & & & & & & & & \\
-60 & II &         Exponential $\rho=0.9$ & & & & & & & & & 
+15 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/15-I-EXCHANGEABLE-0_5.tex} \\
+15 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/15-I-EXCHANGEABLE-0_9.tex} \\
+15 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/15-I-EXPONENTIAL-0_5.tex} \\
+15 &  I &         Exponential $\rho=0.9$ & \input{simulation_results/15-I-EXPONENTIAL-0_9.tex} \\ [1ex]
+15 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/15-II-EXCHANGEABLE-0_5.tex} \\
+15 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/15-II-EXCHANGEABLE-0_9.tex} \\
+15 & II &         Exponential $\rho=0.5$ & \input{simulation_results/15-II-EXPONENTIAL-0_5.tex} \\
+15 & II &         Exponential $\rho=0.9$ & \input{simulation_results/15-II-EXPONENTIAL-0_9.tex} \\ [2ex]
+30 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/30-I-EXCHANGEABLE-0_5.tex} \\
+30 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/30-I-EXCHANGEABLE-0_9.tex} \\
+30 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/30-I-EXPONENTIAL-0_5.tex} \\
+30 &  I &         Exponential $\rho=0.9$ & \input{simulation_results/30-I-EXPONENTIAL-0_9.tex} \\ [1ex]
+30 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/30-II-EXCHANGEABLE-0_5.tex} \\
+30 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/30-II-EXCHANGEABLE-0_9.tex} \\
+30 & II &         Exponential $\rho=0.5$ & \input{simulation_results/30-II-EXPONENTIAL-0_5.tex} \\
+30 & II &         Exponential $\rho=0.9$ & \input{simulation_results/30-II-EXPONENTIAL-0_9.tex} \\ [2ex]
+60 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/60-I-EXCHANGEABLE-0_5.tex} \\
+60 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/60-I-EXCHANGEABLE-0_9.tex} \\
+60 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/60-I-EXPONENTIAL-0_5.tex} \\
+60 &  I &        Exponential $\rho=0.9$ & \input{simulation_results/60-I-EXPONENTIAL-0_9.tex} \\ [1ex]
+60 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/60-II-EXCHANGEABLE-0_5.tex} \\
+60 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/60-II-EXCHANGEABLE-0_9.tex} \\
+60 & II &         Exponential $\rho=0.5$ & \input{simulation_results/60-II-EXPONENTIAL-0_5.tex} \\
+60 & II &         Exponential $\rho=0.9$ & \input{simulation_results/60-II-EXPONENTIAL-0_9.tex}
 \end{tabular}
 \caption{Table of standard deviations of the estimated slopes and 
   average of model-based and sandwich-based standard error estimates}
@@ -246,6 +246,10 @@ Note that the correlation structure is still determined based on $t$, as in the 
 {\em \item Derive a general expression for the relative efficiency of OLS compared to the optimal GLS in estimating $\beta_0$ and $\beta_1$ in this problem.  Your formula should be valid for a homoscedastic exponential covariance matrix with arbitrary
 $\rho$ and for arbitrary $\bx$.  That is, derive a general version of the expressions
 on the bottom of 2.44 that is valid for any choice of covariates.  Note that it is acceptable for your solution to be written using matrix notation and matrix algebra.}
+
+\begin{description}
+\item[Solution:] 
+\end{description}
 {\em \item Reproduce the lines in the table on 2.35 that pertain to $\beta_1$ for the following choices of covariate vectors
 \beas
 \bx&=&(-2,-1,0,1,2)\\

@@ -248,7 +248,102 @@ $\rho$ and for arbitrary $\bx$.  That is, derive a general version of the expres
 on the bottom of 2.44 that is valid for any choice of covariates.  Note that it is acceptable for your solution to be written using matrix notation and matrix algebra.}
 
 \begin{description}
-\item[Solution:] 
+\item[Solution:] Let there be $n$ subjects. Each subject $i$ has $m_i$
+  observations
+  $x_i = \begin{pmatrix} x_{i1} & 
+    x_{i2} & \ldots & x_{im_i} \end{pmatrix}^\intercal$. Let $X_i$ be the
+  $m_i \times 2$ covariate matrix, where $X_{ij1} = 1$ and $X_{ij2} =
+  x_{ij}$. Let $X$ be the $\sum_{i=1}^n m_i \times 2$ matrix obtained by
+  stacking $X_1,X_2,\ldots, X_n$.
+
+  The true model is $Y_{ij} = \beta_0 + \beta_1x_{ij} + \epsilon_{ij}$. Let the
+  obvervations between subjects be independent with each other. Let $\Sigma_i$
+  denote the covariance structure for within-subject observations, that is
+  $\Sigma_{ijk} = \operatorname{cov}\left(\epsilon_{ij}, \epsilon_{ik}\right)$.
+  Let $\Sigma$ be the $\sum_{i=1}^n m_i \times \sum_{i=1}^n m_i$ block diagonal
+  matrix
+  \begin{equation}
+    \Sigma =
+    \begin{pmatrix}
+      \Sigma_1 & & & \\
+      & \Sigma_2 & & \\
+      & & \ddots & \\
+      & & & \Sigma_n
+    \end{pmatrix}.
+  \end{equation}
+  Let $Y_i$ be the vector of observations for subject $i$. Let $Y$ be obtained
+  by concatenating the $Y_1,Y_2,\ldots,Y_n$. If
+  $\beta = \begin{pmatrix} \beta_0 & \beta_1 \end{pmatrix}^\intercal$, we can
+  write $Y = X\beta + \epsilon$, where
+  $\epsilon \sim \mathcal{N}\left(\mathbf{0}, \Sigma\right)$.
+    
+  The OLS estimate for is
+  \begin{equation}
+    \hat{\beta}_{\mathrm{OLS}} = \left(X^{\intercal}X\right)^{-1}X^\intercal Y
+    = \beta + \left(X^{\intercal}X\right)^{-1}X^\intercal \epsilon,
+  \end{equation}
+  which has covariance
+  \begin{align}
+    \operatorname{cov}\left(\hat{\beta}_{\mathrm{OLS}}\right)
+    &= \left(X^{\intercal}X\right)^{-1}X^\intercal
+    \operatorname{cov}\left(\epsilon\right)
+      X\left(X^{\intercal}X\right)^{-1} \nonumber\\
+    &= \left(X^{\intercal}X\right)^{-1}X^\intercal
+      \Sigma
+      X\left(X^{\intercal}X\right)^{-1}.
+      \label{eqn:p2_beta_hat_ols}
+  \end{align}
+
+  The optimal GLS estimate, which can be derived by maximizing likelihood is
+  \begin{equation}
+    \hat{\beta}_{\mathrm{GLS}} = \left(X^{\intercal}\Sigma^{-1}X\right)^{-1}X^\intercal\Sigma^{-1} Y
+    = \beta + \left(X^{\intercal}\Sigma^{-1}X\right)^{-1}X^\intercal\Sigma^{-1} \epsilon,
+  \end{equation}
+  which has covariance
+  \begin{align}
+    \operatorname{cov}\left(\hat{\beta}_{\mathrm{GLS}}\right)
+    &= \left(X^{\intercal}\Sigma^{-1}X\right)^{-1}X^\intercal
+      \Sigma^{-1}
+      \operatorname{cov}
+      \left(\epsilon\right)
+      \Sigma^{-1}
+      X\left(X^{\intercal}\Sigma^{-1}X\right)^{-1} \nonumber\\
+    &= \left(X^{\intercal}\Sigma^{-1}X\right)^{-1}.
+      \label{eqn:p2_beta_hat_gls}
+  \end{align}
+
+  Much of these matrix multiplications can be written as summations:
+  \begin{align*}
+    X^\intercal X
+    &= \sum_{i=1}^n X_i^\intercal X_i \\
+    X^\intercal \Sigma X
+    &= \sum_{i=1}^n X_i^\intercal \Sigma_i X_i \\
+    X^\intercal \Sigma^{-1} X
+    &= \sum_{i=1}^n X_i^\intercal \Sigma_i^{-1} X_i.,
+  \end{align*}
+  which is probably computationally faster if $n$ is very large.
+
+  In any case, using Equations \ref{eqn:p2_beta_hat_ols} and
+  \ref{eqn:p2_beta_hat_gls}, we can calculate relative efficiency
+  \begin{align*}
+    e\left(\hat{\beta}_0\right)
+    &= \left.
+      \left[\left(X^{\intercal}\Sigma^{-1}X\right)^{-1}\right]_{11}
+      \middle/
+      \left[\left(X^{\intercal}X\right)^{-1}X^\intercal
+      \Sigma
+      X\left(X^{\intercal}X\right)^{-1}\right]_{11}
+      \right. \\
+    e\left(\hat{\beta}_1\right)
+    &= \left.
+      \left[\left(X^{\intercal}\Sigma^{-1}X\right)^{-1}\right]_{22}
+      \middle/
+      \left[\left(X^{\intercal}X\right)^{-1}X^\intercal
+      \Sigma
+      X\left(X^{\intercal}X\right)^{-1}\right]_{22}
+      \right.
+  \end{align*}
+  by taking the corresponding entries of the covariance matrix.
 \end{description}
 {\em \item Reproduce the lines in the table on 2.35 that pertain to $\beta_1$ for the following choices of covariate vectors
 \beas

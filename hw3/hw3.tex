@@ -9,6 +9,7 @@
 
 \usepackage{amsmath, amsfonts, amssymb, color}
 \usepackage{bm}
+\usepackage{booktabs}
 \usepackage{enumerate}
 \usepackage{graphicx}
 \newcommand*{\justifyheading}{\raggedleft}
@@ -108,9 +109,74 @@ The factors that will vary are
 \end{itemize}
 \end{itemize}}
 
-\begin{description}
-\item[Solution:] See the results in Table \ref{tab:p1_results}.
+\begin{table}
+  \tiny
+\centering
+\begin{tabular}{ccr|ccc|ccc|ccc}
+&&&\multicolumn{3}{|c}{$\mathbf{SD(\hat\beta_1)}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,QL})}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,sand})}$}\\
+&&&\multicolumn{3}{c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}\\
+$n$ & Design & True Corr & Uncor & Exch & Expon & Uncor & Exch & Expon & Uncor & Exch & Expon \\ \hline
+15 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/15-I-EXCHANGEABLE-0_5.tex} \\
+15 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/15-I-EXCHANGEABLE-0_9.tex} \\
+15 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/15-I-EXPONENTIAL-0_5.tex} \\
+15 &  I &         Exponential $\rho=0.9$ & \input{simulation_results/15-I-EXPONENTIAL-0_9.tex} \\ [1ex]
+15 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/15-II-EXCHANGEABLE-0_5.tex} \\
+15 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/15-II-EXCHANGEABLE-0_9.tex} \\
+15 & II &         Exponential $\rho=0.5$ & \input{simulation_results/15-II-EXPONENTIAL-0_5.tex} \\
+15 & II &         Exponential $\rho=0.9$ & \input{simulation_results/15-II-EXPONENTIAL-0_9.tex} \\ [2ex]
+30 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/30-I-EXCHANGEABLE-0_5.tex} \\
+30 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/30-I-EXCHANGEABLE-0_9.tex} \\
+30 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/30-I-EXPONENTIAL-0_5.tex} \\
+30 &  I &         Exponential $\rho=0.9$ & \input{simulation_results/30-I-EXPONENTIAL-0_9.tex} \\ [1ex]
+30 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/30-II-EXCHANGEABLE-0_5.tex} \\
+30 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/30-II-EXCHANGEABLE-0_9.tex} \\
+30 & II &         Exponential $\rho=0.5$ & \input{simulation_results/30-II-EXPONENTIAL-0_5.tex} \\
+30 & II &         Exponential $\rho=0.9$ & \input{simulation_results/30-II-EXPONENTIAL-0_9.tex} \\ [2ex]
+60 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/60-I-EXCHANGEABLE-0_5.tex} \\
+60 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/60-I-EXCHANGEABLE-0_9.tex} \\
+60 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/60-I-EXPONENTIAL-0_5.tex} \\
+60 &  I &        Exponential $\rho=0.9$ & \input{simulation_results/60-I-EXPONENTIAL-0_9.tex} \\ [1ex]
+60 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/60-II-EXCHANGEABLE-0_5.tex} \\
+60 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/60-II-EXCHANGEABLE-0_9.tex} \\
+60 & II &         Exponential $\rho=0.5$ & \input{simulation_results/60-II-EXPONENTIAL-0_5.tex} \\
+60 & II &         Exponential $\rho=0.9$ & \input{simulation_results/60-II-EXPONENTIAL-0_9.tex}
+\end{tabular}
+\caption{Table of standard deviations of the estimated slopes and 
+  average of model-based and sandwich-based standard error estimates}
+\label{tab:p1_results}
+\end{table}
 
+\begin{description}
+\item[Solution:] See the results in Table \ref{tab:p1_results}. Correct standard
+  errors are found when the assumed correlation structure agrees with the true
+  correlation structure when using GLS (columns 2 and 3). Ignoring the
+  correlation within the clusters overestimates the standard error (first
+  column). When incorrectly assuming exponential correlation, the standard error
+  is overestimated. When incorrectly assuming exchangeable correlation, the
+  standard error is underestimated.
+
+  Quasi-likelihood doesn't help very much when the correlation structure is
+  misspecified. The standard error estimates are almost identical to just using
+  GLS. The standard errors are slightly closer to those of the sandwich
+  estimator, so there is some insignificant gain.
+
+  Comparing the sandwich estimation with GLS when the assumed correlation is
+  correct, one sees that the standard error estimates are underestimated for
+  smaller $n$. For $n = 60$, the estimates are very good. When the correlation
+  structure is misspecified, sandwich estimation comes closest to the actual the
+  standard error, especially when $n$ is large (verified numerically, results
+  not shown). It follows that misspecifying the correlation structure as
+  exchangeable or exponential doesn't affect the standard error of
+  $\hat{\beta}_1$ very much. 
+
+  This is also the case when assuming no correlation with design I. However, when
+  using design II, where not all the clusters have identical covariates,
+  assuming no correlation increases the standard error of our estimator
+  significantly. This effect is even more pronounced when there is more
+  correlation ($\rho = 0.9$ versus $\rho = 0.5$).
+
+  Details of the calculation are described below, and code is in the appendix.
+    
   Let $X_i$ be the covariates for each cluster with a column of $1$s
   prepended. Let $y_i$ be the cluster responses.
 
@@ -119,7 +185,6 @@ The factors that will vary are
   where $X$ is the concatenation of the cluster covariates and $y$ is the
   concatenation of the cluster responses.
   
-
   We can get the covariances for $\hat{\beta}$ with
   \begin{align*}
     \operatorname{cov}\left(\hat{\beta}\right)
@@ -196,43 +261,6 @@ The factors that will vary are
   \end{equation}
   
 \end{description}
-
-\begin{table}
-  \tiny
-\centering
-\begin{tabular}{ccr|ccc|ccc|ccc}
-&&&\multicolumn{3}{|c}{$\mathbf{SD(\hat\beta_1)}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,QL})}$}&\multicolumn{3}{|c}{$\mathbf{E(\widehat{SE}_{1,sand})}$}\\
-&&&\multicolumn{3}{c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}&\multicolumn{3}{|c}{Assumed Corr}\\
-$n$ & Design & True Corr & Uncor & Exch & Expon & Uncor & Exch & Expon & Uncor & Exch & Expon \\ \hline
-15 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/15-I-EXCHANGEABLE-0_5.tex} \\
-15 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/15-I-EXCHANGEABLE-0_9.tex} \\
-15 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/15-I-EXPONENTIAL-0_5.tex} \\
-15 &  I &         Exponential $\rho=0.9$ & \input{simulation_results/15-I-EXPONENTIAL-0_9.tex} \\ [1ex]
-15 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/15-II-EXCHANGEABLE-0_5.tex} \\
-15 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/15-II-EXCHANGEABLE-0_9.tex} \\
-15 & II &         Exponential $\rho=0.5$ & \input{simulation_results/15-II-EXPONENTIAL-0_5.tex} \\
-15 & II &         Exponential $\rho=0.9$ & \input{simulation_results/15-II-EXPONENTIAL-0_9.tex} \\ [2ex]
-30 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/30-I-EXCHANGEABLE-0_5.tex} \\
-30 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/30-I-EXCHANGEABLE-0_9.tex} \\
-30 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/30-I-EXPONENTIAL-0_5.tex} \\
-30 &  I &         Exponential $\rho=0.9$ & \input{simulation_results/30-I-EXPONENTIAL-0_9.tex} \\ [1ex]
-30 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/30-II-EXCHANGEABLE-0_5.tex} \\
-30 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/30-II-EXCHANGEABLE-0_9.tex} \\
-30 & II &         Exponential $\rho=0.5$ & \input{simulation_results/30-II-EXPONENTIAL-0_5.tex} \\
-30 & II &         Exponential $\rho=0.9$ & \input{simulation_results/30-II-EXPONENTIAL-0_9.tex} \\ [2ex]
-60 &  I & Exchangeable $\rho=0.5$ & \input{simulation_results/60-I-EXCHANGEABLE-0_5.tex} \\
-60 &  I & Exchangeable $\rho=0.9$ & \input{simulation_results/60-I-EXCHANGEABLE-0_9.tex} \\
-60 &  I &         Exponential $\rho=0.5$ & \input{simulation_results/60-I-EXPONENTIAL-0_5.tex} \\
-60 &  I &        Exponential $\rho=0.9$ & \input{simulation_results/60-I-EXPONENTIAL-0_9.tex} \\ [1ex]
-60 & II & Exchangeable $\rho=0.5$ & \input{simulation_results/60-II-EXCHANGEABLE-0_5.tex} \\
-60 & II & Exchangeable $\rho=0.9$ & \input{simulation_results/60-II-EXCHANGEABLE-0_9.tex} \\
-60 & II &         Exponential $\rho=0.5$ & \input{simulation_results/60-II-EXPONENTIAL-0_5.tex} \\
-60 & II &         Exponential $\rho=0.9$ & \input{simulation_results/60-II-EXPONENTIAL-0_9.tex}
-\end{tabular}
-\caption{Table of standard deviations of the estimated slopes and 
-  average of model-based and sandwich-based standard error estimates}
-\label{tab:p1_results}
-\end{table}
 
 \section*{Problem 2: Efficiency of OLS for linear models with correlated data (6 points)}
 {\em Review the example on slides 2.34 -- 2.35, which can also be found on pages 60 -- 62 of the Diggle et al. textbook.  We will generalize this example by considering the mean model
@@ -352,9 +380,44 @@ on the bottom of 2.44 that is valid for any choice of covariates.  Note that it 
 \bx&=&(0,-1,1,3,2)\\
 \bx&=&(0,-1,1,5,2)
 \eeas}
+
+
+\begin{table}
+  \scriptsize
+  \centering
+  \input{p2_efficiencies.tex}
+  \caption{Efficiency results comparing OLS with GLS.}
+  \label{tab:p2_efficiencies}
+\end{table}
+
+\begin{description}
+\item[Solution:] Results can be seen Table \ref{tab:p2_efficiencies}. Code is in the appendix.
+\end{description}
+
 {\em \item Explain the key differences between the relative efficiencies you just calculated.  Phrase your answers in a manner that will be understandable by
 a quantitavely sophisticated non-statistician (e.g., an epidemiologist collaborator).
 }
+
+\begin{description}
+\item[Solution:] If there's not much correlation, i.e. small $\rho$, there's not
+  much efficiency gain in using GLS over OLS.
+
+  For $\beta_1$, the efficiency gain does depend on the observed covariates,
+  however. Recall that the estimated for $\beta_1$ can be written as a sum of
+  weighted pairwise slopes. The weight is higher for for pairs where $x_{ij_1}$
+  and $x_{ij_2}$ are further part because the effect size becomes bigger
+  relative to the noise. Similarly, when the errors are positively correlated,
+  more of the variance is explained away, so we are more confident about the
+  slope estimate $\beta_1$.
+
+  These two factors interact multiplicatively. Thus, when
+  \[\mathbf{x} \in \left\{ (-1,-2,0,2,1), (0,-1,1,3,2), (0,-1,1,5,2) \right\},\]
+  there are pairs of observations where the difference in covariates is large
+  and the correlation is high. GLS is able to leverage this to produce a more
+  efficient estimator. In particular when $\mathbf{x} = (0,-1,1,5,2)$, there are
+  neighboring observations where the difference in covariates can be quite
+  large, leading to the relatively most efficient estimator when using GLS.
+\end{description}
 \end{enumerate} 
 
 \end{document}

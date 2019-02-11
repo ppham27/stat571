@@ -12,6 +12,7 @@
 \usepackage{booktabs}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{pdfpages}
 \newcommand*{\justifyheading}{\raggedleft}
 
 
@@ -382,7 +383,7 @@ on the bottom of 2.44 that is valid for any choice of covariates.  Note that it 
 \eeas}
 
 
-\begin{table}
+\begin{table}[ht!]
   \scriptsize
   \centering
   \input{p2_efficiencies.tex}
@@ -418,6 +419,15 @@ a quantitavely sophisticated non-statistician (e.g., an epidemiologist collabora
   neighboring observations where the difference in covariates can be quite
   large, leading to the relatively most efficient estimator when using GLS.
 \end{description}
-\end{enumerate} 
+\end{enumerate}
+
+\section*{Appendix}
+
+Code is attached on subsequent pages.
+
+\clearpage
+
+\includepdf[pages=-]{p1_glm.pdf}
+\includepdf[pages=-]{ols_efficiency.pdf}
 
 \end{document}

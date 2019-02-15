@@ -7,10 +7,12 @@
 \addtolength{\topmargin}{-1in}
 \setlength{\parskip}{0.1in}
 
-\usepackage{amsmath, amsfonts, color}
+\usepackage{amsmath, amsfonts, amssymb, color}
 \usepackage{bm}
+\usepackage{booktabs}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{pdfpages}
 \newcommand*{\justifyheading}{\raggedleft}
 
 
@@ -84,9 +86,126 @@ For each procedure, compute point estimates and robust sandwich-based standard e
 ($\bbeta$, $\alpha$, and $\sigma^2$) in their 1st/2nd/3rd significant figures.}
 \begin{enumerate}[(a)]
 {\em \item Use the non-iterative procedure we have employed previously; that is, first estimate $\bbeta$ by OLS, then estimate the covariance parameters based on residuals from the OLS fit, and then restimate $\bbeta$ 
-using the updated working covariance matrix. }
+  using the updated working covariance matrix. }
+
+\begin{description}
+\item[Solution:] The covariance structure for each cluster $i$ is assumed to be
+  the $m_i \times m_i$ matrix $\Sigma_i$, where $\Sigma_{ijj} = \sigma^2$ and
+  $\Sigma_{ijk} = \sigma^2\alpha^{\left\lvert j - k\right\rvert}$.
+
+  Given a working estimate of $\beta$, say $\hat{\beta}^{(t)}$, we compute
+  working covariance matrices for each cluster
+  \[\hat{\Sigma}_i^{(t + 1)} = \left(y_i - X_i\hat{\beta}^{(t)}\right)\left(y_i -
+      X_i\hat{\beta}^{(t)}\right)^\intercal.\] We get working estimates of the
+  covariance parameters $\alpha$ and $\sigma^2$:
+  \begin{align*}
+    \left(\hat{\sigma}^2\right)^{(t + 1)}
+    &= \frac{1}{\sum_{i=1}^nm_i}\sum_{i=1}^n\sum_{j=1}^{m_i}\hat{\Sigma}_{ijj}^{(t + 1)} \\
+    \hat{\alpha}^{(t + 1)}
+    &= \frac{1}{\left(\hat{\sigma}^2\right)^{(t + 1)}\sum_{i=1}^n\left(m_i - 1\right)}
+      \sum_{i=1}^n\sum_{j=1}^{m_i-1}\hat{\Sigma}_{i,j,j+1}^{(t + 1)}.
+  \end{align*}
+
+
+  Let $\hat{V}^{(t+1)}$ be the matrix where
+  $\hat{V}_{ij}^{(t+1)} = \left(\hat{\sigma}^2\right)^{(t+1)}
+  \left(\hat{\alpha}^{(t+1)}\right)^{\lvert j - i\rvert}$. Let
+  $\hat{W}^{(t+1)} = \left(\hat{V}^{(t+1)}\right)^{-1}$.
+
+  Then, we
+  can get an updated estimate of $\beta$:
+  \begin{equation}
+    \hat{\beta}^{(t+1)} =
+    \left(
+      \sum_{i=1}^n X_i^\intercal \hat{W}^{(t+1)} X_i
+    \right)^{-1}
+    \left(
+      \sum_{i=1}^n X_i^\intercal \hat{W}^{(t+1)} y_i
+    \right).
+  \end{equation}
+
+  We can compute the covariance of this estimate with the sandwich estimate:
+  \begin{equation}
+    \hat{\operatorname{cov}}\left(
+      \hat{\beta}^{(t+1)}
+    \right) =
+    \left(
+      \sum_{i=1}^n X_i^\intercal \hat{W}^{(t+1)} X_i
+    \right)^{-1}
+    \left(
+      \sum_{i=1}^n X_i^\intercal \hat{W}^{(t+1)} 
+      \hat{\Sigma}^{(t+1)}
+      \hat{W}^{(t+1)} 
+      X_i
+    \right)
+    \left(
+      \sum_{i=1}^n X_i^\intercal \hat{W}^{(t+1)} X_i
+    \right)^{-1},
+    \label{eqn:sandwich_estimate}
+  \end{equation}
+  where \[
+    \hat{\Sigma}^{(t+1)} = \frac{1}{n}\sum_{i=1}^n
+    \left(y_i - X_i\hat{\beta}^{(t+1)}\right)
+    \left(y_i - X_i\hat{\beta}^{(t+1)}\right)^\intercal,
+  \]
+  since we assume all clusters have the same covariance structure.
+
+  To obtain $\hat{\beta}^{(0)}$, we let $\hat{W}^{(0)} = I$. This is the OLS
+  esimate. See Table \ref{tab:beta0_estimate} for the estimate and standard
+  errors.
+  
+  \begin{table}
+    \centering
+    \input{beta0_estimate.tex}
+    \caption{Estimate of $\beta$ using OLS. Standard errors were estimated using
+      Equation \ref{eqn:sandwich_estimate}.}
+    \label{tab:beta0_estimate}
+  \end{table}
+
+  With this estimate, we obtain $\hat{\alpha}^{(1)} = 0.61136$ and
+  $\left(\hat{\sigma}^2\right)^{(1)} = 4.90516$, which allows us to use
+  $\hat{W}^{(1)}$ to get a new estimate of $\beta^{(1)}$. See Table
+  \ref{tab:beta1_estimate}.
+
+  \begin{table}
+    \centering
+    \input{beta1_estimate.tex}
+    \caption{$\hat{\beta}^{(1)}$ is an updated estimates for $\beta$.}
+    \label{tab:beta1_estimate}
+  \end{table}  
+  
+  
+\end{description}
+
+
 {\em \item Iterate the procedure in part (a), as suggested on slide 2.44.}
+
+\begin{description}
+\item[Solution:] The final converged estimates can be found in Table
+  \ref{tab:beta_final_estimate}.
+  \begin{table}[!ht]
+    \centering
+    \input{beta_final_estimate.tex}
+    \caption{Final converged estimates for $\beta$.}
+    \label{tab:beta_final_estimate}
+  \end{table}
+
+  For the covariance parameters, we found $\hat{\alpha} = 0.61353$ and
+  $\hat{\sigma}^2 = 4.91065$.
+
+  It took only one iteration to find convergence in the first significant digit
+  ($\hat{\beta}^{(1)}$). Already by the second iteration ($\hat{\beta}^{(2)}$),
+  we have convergence in the second and third significant digits.
+\end{description}
 \end{enumerate}
 
+\pagebreak
+\section*{Appendix}
+
+Code to produce tables is attached.
+
+\pagebreak
+
+\includepdf[pages=-]{iterative_gee_dental.pdf}
 
 \end{document}

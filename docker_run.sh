@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-docker run -p 8888:8888 -p 6006:6006 -p 6007:6007 \
+docker run -p 8888:8888 -p 6006:6006 \
        -it --rm \
-       -v "$(pwd):/local" \
-       -w "/local" \
+       -v "$(pwd):/tf/local" \
        stat571:latest \
        "$@"

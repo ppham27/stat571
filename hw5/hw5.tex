@@ -7,7 +7,8 @@
 \addtolength{\topmargin}{-1in}
 \setlength{\parskip}{0.1in}
 
-\usepackage{amsmath, amsfonts, color}
+\usepackage{amsmath, amsfonts, amssymb, color}
+\usepackage{booktabs}
 \usepackage{bm}
 \usepackage{enumerate}
 \usepackage{graphicx}
@@ -66,19 +67,14 @@
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 
+\title{STAT/BIOST 571: Homework 5}
+\author{Philip Pham}
+\date{\today}
+
 \begin{document}
 
+\maketitle
 
-\Large 
-\begin{center}
-\bf STAT/BIOST 571: Homework 5
-\end{center} 
-\normalsize 
-
-To be handed in on Friday, February 22. 
-Where solutions require use of \texttt{R}, summarize your findings in a written answer. For each question, write up your solution on your own, using \textbf{full sentences}.
-
-\textbf{IMPORTANT NOTE: Please include your annotated code in an appendix, to show what you did.}
 \section*{Problem 1: Sandwich and bootstrap standard error estimates (10 points)}
 {\em As on slide 2.76, fit the model
 \[
@@ -87,11 +83,85 @@ EY_{ij}=\beta_0 +\beta_1(Age_{ij}-8)+\beta_2 Gender_i + \beta_3(Age_{ij} -8)\tim
 to the dental data by using REML, but use a homoscedastic covariance models with no correlation.}
 \begin{enumerate}[(a)]
 {\em \item Calculate sandwich-based standard error estimates for $\hat{\beta_3}$ that account for clustering by subject.  Write your
-own code for this, using matrix algebra.}
+  own code for this, using matrix algebra.}
+
+\begin{table}[h]
+  \centering
+  \input{reml_estimates.tex}
+  \caption{Parameter estimates using REML with a homoscedastic covariance models
+    with no correlation.}
+  \label{tab:reml_estimates}
+\end{table}
+
+\begin{description}
+\item[Solution:] The REML estimates can be found in Table
+  \ref{tab:reml_estimates}. Standard errors were calculated assuming that
+  covariance model is specified correctly by taking the square root of the
+  diagonal
+  $\left(\sum_{i=1}^n X_i^\intercal \hat{\Sigma}^{-1}_{\text{REML}}
+    X_i\right)^{-1}$, where $\hat{\Sigma}_{\text{REML}} = \hat{\alpha} I_m$,
+  since cluster sizes are equal and there is only one covariance parameter on
+  the diagonal.
+  
+  Sandwich covariance estimates can be obtained by
+  \begin{align*}
+    \hat{\Sigma}_{\text{Sandwich}}
+    &=
+    \left(\sum_{i=1}^n X_i^\intercal \hat{\Sigma}^{-1}_{\text{REML}} X_i\right)^{-1}
+    \left(\sum_{i=1}^n X_i^\intercal\hat{\Sigma}^{-1}_{\text{REML}}
+      \hat{\Sigma}_{\text{Empirical}}
+      \hat{\Sigma}^{-1}_{\text{REML}}X_i\right)
+    \left(\sum_{i=1}^n X_i^\intercal \hat{\Sigma}^{-1}_{\text{REML}} X_i\right)^{-1},
+  \end{align*}
+  where the empirical covariance estimate is
+  $\hat{\Sigma}_{\text{Empirical}} = \frac{1}{n}\sum_{i=1}^n \left(Y_i -
+    X_i\hat{\beta}\right)\left(Y_i - X_i\hat{\beta}\right)^\intercal$ since we
+  assume each cluster has the same covariance structure.
+
+  Using $\hat{\Sigma}_{\text{Sandwich}}$ for to get the standard error of
+  $\hat{\beta}_3$, we obtain a smaller standard error $\boxed{0.11686716}$ since
+  we can exploit within cluster correlation to get a better estimate.
+\end{description}
 {\em \item Calculate bootstrap standard error estimates 
 for $\hat{\beta}_3$ by resampling clusters.  Describe the results of some basic diagnostics you can do to provide confidence that
 bootstrap intervals are valid for this dataset and that you have simulated a sufficient number 
 of draws to accurately approximate true bootstrap intervals?}
+
+\begin{figure}
+  \centering
+  \includegraphics{qq_bootstrap_cluster.pdf}
+  \caption{Bootstrap Q--Q plot for $\hat\beta_3$ when resampling clusters.}
+  \label{fig:qq_bootstrap_cluster}
+\end{figure}
+
+\begin{description}
+\item[Solution:] The bootstrap standard error for $\hat{\beta}_3$ when
+  resampling clusters is $\boxed{0.11997406,}$ which is similar to the
+  sandwich estimate.
+
+  This was calculated by taking the square root of the sample variance of the of
+  the boostrap samples for $\hat{\beta}_3$. 2,048 samples were taken. Normality
+  of the samples was checked by using a Q--Q plot in Figure
+  \ref{fig:qq_bootstrap_cluster} and a histogram in Figure
+  \ref{fig:hist_bootstrap_cluster}. The distribution in the histrogram does look
+  normal, and the fit in the Q--Q plot is quite good, so we can be confident
+  that the distribution of the samples is indeed normal.
+
+  Indeed, if $\hat{\beta}_3$ is our REML estimate, $\hat{\sigma}$ is our
+  bootstrap standard error, and $\Phi$ is the CDF for the standard normal, then
+  the interval
+  $\left[\hat{\beta}_3 - \Phi^{-1}\left(0.975\right)\hat{\sigma}, \hat{\beta}_3
+    + \Phi^{-1}\left(0.975\right)\hat{\sigma}\right]$ contains 94.97\% of the
+  bootstrap samples, so the interval is quite accurate.
+\end{description}
+
+\begin{figure}
+  \centering
+  \includegraphics{hist_bootstrap_cluster.pdf}
+  \caption{Bootstrap histogram for $\hat\beta_3$ when resampling clusters.}
+  \label{fig:hist_bootstrap_cluster}
+\end{figure}
+
 { \em \item Calculate bootstrap standard error estimates for $\hat{\beta}_3$ based on resampling observations
 without regard to cluster and resampling both clusters and observations within clusters. }
 {\em \item Discuss any differences between your sandwich standard error estimates and the three versions of bootstrap standard errors.}

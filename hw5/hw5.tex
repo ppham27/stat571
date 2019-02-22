@@ -12,6 +12,7 @@
 \usepackage{bm}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{pdfpages}
 \newcommand*{\justifyheading}{\raggedleft}
 
 
@@ -172,13 +173,47 @@ of draws to accurately approximate true bootstrap intervals?}
     strategies. 2,048 samples were collected each time.}
   \label{tab:bootstrap_standard_errors}
 \end{table}
-{\em \item Discuss any differences between your sandwich standard error estimates and the three versions of bootstrap standard errors.}
 
 \begin{description}
-\item[Solution:] Table \ref{tab:bootstrap_standard_errors}.
+\item[Solution:] The results can be seen in Table
+  \ref{tab:bootstrap_standard_errors}. Independent sampling is done without
+  regard to clusters. In hierarchical sampling, clusters are sampled, and then,
+  observations within clusters are sampled.
+
+  When sampling without regard to clusters, the standard error for
+  $\hat{\beta}_3$ is $\boxed{0.198361,}$ which is similar to the REML standard
+  error in Table \ref{tab:reml_estimates}.
+
+  When resampling both clusters and observations within clusters, the standard
+  error for $\hat{\beta}_3$ is $\boxed{0.218498,}$ which is quite large.
 \end{description}
-\end{enumerate} 
 
+{\em \item Discuss any differences between your sandwich standard
+  error estimates and the three versions of bootstrap standard errors.}
 
+\begin{description}
+\item[Solution:] See Table \ref{tab:reml_estimates} for the sandwich estimates
+  and Table \ref{tab:bootstrap_standard_errors} for the bootstrap estimates.
 
+  When only resampling clusters, the standard errors are similar to those of the
+  sandwich-based standard errors. This is not surprising since our equation for
+  the sandwich estimate is accounting for the within-cluster correlation in
+  calculating $\hat{\Sigma}_\text{Empirical}$ and summing over the clusters.
+
+  When resampling without regard to clusters, the standard errors are similar to
+  those of the REML model. This makes sense since in our REML model, we're
+  assuming homoscedastic covariance models with no correlation, which means
+  we're assuming that our observations are independent of each other.
+
+  When resampling both clusters and observations within clusters, we get large,
+  inaccurate standard errors. This is because the cluster sizes $m = 4$ are
+  quite small, so the asymptotics are not kicking in.
+\end{description}
+\end{enumerate}
+
+\section*{Appendix}
+
+Code for generating the tables and figures is attached in the subsequent pages.
+
+\includepdf[pages=-]{sandwich_bootstrap_dental.pdf}
 \end{document}

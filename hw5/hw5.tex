@@ -95,7 +95,7 @@ to the dental data by using REML, but use a homoscedastic covariance models with
 
 \begin{description}
 \item[Solution:] The REML estimates can be found in Table
-  \ref{tab:reml_estimates}. Standard errors were calculated assuming that
+  \ref{tab:reml_estimates}. REML standard errors were calculated assuming that
   covariance model is specified correctly by taking the square root of the
   diagonal
   $\left(\sum_{i=1}^n X_i^\intercal \hat{\Sigma}^{-1}_{\text{REML}}
@@ -162,9 +162,21 @@ of draws to accurately approximate true bootstrap intervals?}
   \label{fig:hist_bootstrap_cluster}
 \end{figure}
 
-{ \em \item Calculate bootstrap standard error estimates for $\hat{\beta}_3$ based on resampling observations
-without regard to cluster and resampling both clusters and observations within clusters. }
+{\em \item Calculate bootstrap standard error estimates for $\hat{\beta}_3$ based on resampling observations  
+  without regard to cluster and resampling both clusters and observations within clusters. }
+
+\begin{table}
+  \centering
+  \input{bootstrap_standard_errors.tex}
+  \caption{Standard errors calculated with the bootstrap with various sampling
+    strategies. 2,048 samples were collected each time.}
+  \label{tab:bootstrap_standard_errors}
+\end{table}
 {\em \item Discuss any differences between your sandwich standard error estimates and the three versions of bootstrap standard errors.}
+
+\begin{description}
+\item[Solution:] Table \ref{tab:bootstrap_standard_errors}.
+\end{description}
 \end{enumerate} 
 
 

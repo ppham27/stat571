@@ -1,0 +1,124 @@
+\documentclass[11pt, letterpaper]{article}
+\setlength{\parindent}{0in}
+\setlength{\textheight}{8.7in}
+\setlength{\textwidth}{6.8in}
+\setlength{\oddsidemargin}{-0.3in}
+\setlength{\evensidemargin}{0.0in}
+\addtolength{\topmargin}{-1in}
+\setlength{\parskip}{0.1in}
+
+\usepackage{amsmath, amsfonts, color}
+\usepackage{bm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\newcommand*{\justifyheading}{\raggedleft}
+
+
+\renewcommand{\baselinestretch}{1.0}
+
+\newcommand{\bx}{{\bm x}}
+\newcommand{\bX}{{\bm X}}
+\newcommand{\by}{{\bm y}}
+\newcommand{\bY}{{\bm Y}}
+\newcommand{\bW}{{\bm W}}
+\newcommand{\bG}{{\bm G}}
+\newcommand{\bR}{{\bm R}}
+\newcommand{\bZ}{{\bm Z}}
+\newcommand{\bV}{{\bm V}}
+\newcommand{\bL}{{\bm L}}
+\newcommand{\bz}{{\bm z}}
+\newcommand{\be}{{\bm e}}
+\newcommand{\bgamma}{{\bm \gamma}}
+\newcommand{\bbeta}{{\bm \beta}}
+\newcommand{\balpha}{{\bm \alpha}}
+\newcommand{\bSigma}{{\bm \Sigma}}
+\newcommand{\bmu}{{\bm \mu}}
+\newcommand{\btheta}{{\bm \theta}}
+\newcommand{\bepsilon}{{\bm \epsilon}}
+\newcommand{\bone}{{\bm 1}}
+\newcommand{\bzero}{{\bm 0}}
+\newcommand{\bC}{{\bm C}}
+\newcommand{\bI}{{\bm I}}
+\newcommand{\bA}{{\bm A}}
+\newcommand{\bB}{{\bm B}}
+\newcommand{\bQ}{{\bm Q}}
+\newcommand{\bS}{{\bm S}}
+\newcommand{\bD}{{\bm D}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cL}{\mathcal{L}}
+
+\newcommand{\beas}{\begin{eqnarray*}}
+\newcommand{\eeas}{\end{eqnarray*}}
+
+\newenvironment{equationarrayright}{
+                          \begin{eqnarray*}
+                          \begin{array}{rcll}
+                         }{
+                          \end{array}
+                          \end{eqnarray*}
+                         }
+\newcommand{\bear}{\begin{equationarrayright}}
+\newcommand{\eear}{\end{equationarrayright}}
+
+\renewcommand\arraystretch{1.3}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{STAT/BIOST 571: Homework 6}
+\author{Philip Pham}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem 1: Fitting and interpreting the results of a linear mixed effects model; robust standard error estimation (20 points)}
+ 
+{\em Download the $\texttt{creatinine.csv}$ dataset from the course website.  This file
+contains repeated observational data for 619 subjects, some of whom have hypertension and some
+of whom have a hereditary kidney disease, as indicated by the \texttt{group} variable, according to the coding in the Table~\ref{ta:orig.hw1}.
+\begin{table}[ht]
+\center
+\begin{tabular}{cccc}
+\hline
+Group&Kidney disease&Hypertension&Sample size\\
+\hline
+1&Yes&Yes&294\\
+2&Yes&No&103\\
+3&No&Yes&73\\
+4&No&No&149\\
+\hline
+\end{tabular}
+\caption{Measurements of serum creatinne reciprocals from 619 subjects in four groups}
+\label{ta:orig.hw1}
+\end{table}
+The outcome variable is \texttt{scr}, the reciprocal of
+serum creatinine.  Serum creatinine is a measure of kidney function, with lower values
+indicating better kidney function.  Higher values of the reciprocal reported in \texttt{scr} indicate better kidney function.  The observations were taken at arbitrary times from each subject, with the number
+of observations ranging from 1 to 22.  Ignoring hypertension status, we are interested in estimating
+the rate of change of \texttt{scr} for subjects with and without hereditary kidney disease.
+Thus, the only fixed effect covariates in your model should be age, kidney disease status, and possibly an
+interaction between these. 
+In order to account for correlation within subjects, you will be fitting a linear mixed effects model with
+uncorrelated random slopes and intercepts and serial correlation of residuals that follows a spherical
+correlation model, including a nugget (correlation should be based on the timing of observations).  Please use the \texttt{lme()} function in the \texttt{nlme} package in R to fit your models (i.e., do not code your own nonlinear optimization).}
+\begin{enumerate}[(a)]
+\item {\em Fit the model by ML and
+report the
+estimated values of all variance parameters. }
+
+\item {\em  Report point estimates and standard errors for all fixed effect
+coefficients in your model.  Include three versions of standard error estimates: (i) robust/empirical sandwich SEs that correctly
+account for clustering of the data, (ii) bootstrap SEs that correctly account for clustering of the data, and (iii) model based SE estimates based on the assumed random effect model being correct.}
+
+\item {\em  Now, give point estimates and three versions of standard error estimates for the marginal rates of change in \texttt{scr} in subjects with and without 
+kidney disease.  As in part (b), your three versions of SE estimates should be:  (i) robust/empirical sandwich SEs that correctly
+account for clustering of the data, (ii) bootstrap SEs that correctly account for clustering of the data, and (iii) model based SE estimates based on the assumed random effect model being correct.  Depending on how you parameterized your model, these answers may or may not 
+coincide with estimates you reported in part (b).  You may parameterize the model any way you wish,
+but you must answer this question based on the output of a single call to \texttt{lme()}.}
+
+\end{enumerate}
+
+\end{document}

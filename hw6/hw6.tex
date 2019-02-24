@@ -9,6 +9,7 @@
 
 \usepackage{amsmath, amsfonts, color}
 \usepackage{bm}
+\usepackage{booktabs}
 \usepackage{enumerate}
 \usepackage{graphicx}
 \newcommand*{\justifyheading}{\raggedleft}
@@ -113,11 +114,23 @@ estimated values of all variance parameters. }
 coefficients in your model.  Include three versions of standard error estimates: (i) robust/empirical sandwich SEs that correctly
 account for clustering of the data, (ii) bootstrap SEs that correctly account for clustering of the data, and (iii) model based SE estimates based on the assumed random effect model being correct.}
 
+\input{standard_errors_no_interaction.tex}
+
+\begin{description}
+\item[Solution:] Table \ref{tab:standard_errors_no_interaction}
+\end{description}
+
 \item {\em  Now, give point estimates and three versions of standard error estimates for the marginal rates of change in \texttt{scr} in subjects with and without 
 kidney disease.  As in part (b), your three versions of SE estimates should be:  (i) robust/empirical sandwich SEs that correctly
 account for clustering of the data, (ii) bootstrap SEs that correctly account for clustering of the data, and (iii) model based SE estimates based on the assumed random effect model being correct.  Depending on how you parameterized your model, these answers may or may not 
 coincide with estimates you reported in part (b).  You may parameterize the model any way you wish,
 but you must answer this question based on the output of a single call to \texttt{lme()}.}
+
+\input{standard_errors_interaction.tex}
+
+\begin{description}
+\item[Solution:] Table \ref{tab:standard_errors_interaction}
+\end{description}
 
 \end{enumerate}
 

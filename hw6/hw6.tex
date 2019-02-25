@@ -7,7 +7,7 @@
 \addtolength{\topmargin}{-1in}
 \setlength{\parskip}{0.1in}
 
-\usepackage{amsmath, amsfonts, color}
+\usepackage{amsmath, amsfonts, amssymb, color}
 \usepackage{bm}
 \usepackage{booktabs}
 \usepackage{enumerate}
@@ -109,6 +109,20 @@ correlation model, including a nugget (correlation should be based on the timing
 \item {\em Fit the model by ML and
 report the
 estimated values of all variance parameters. }
+
+\begin{description}
+  The parameter estimates of fitting the model without and with an interaction
+  term can be seen in Tables \ref{tab:standard_errors_no_interaction} and
+  \ref{tab:standard_errors_interaction}.
+
+  The covariance structure of a cluster $i$ can be described by the matrix
+  \begin{equation}
+    \Sigma_i = \sigma^2\left(Z_iGZ_i^\intercal + R_i\right)
+    \label{eqn:cluster_covariance}
+  \end{equation}
+  $Z_i$ is a $m_i \times 2$ matrix, where the first column entries are all $1$s,
+  and the second column entries are ages $t_{ij}$.
+\end{description}
 
 \item {\em  Report point estimates and standard errors for all fixed effect
 coefficients in your model.  Include three versions of standard error estimates: (i) robust/empirical sandwich SEs that correctly

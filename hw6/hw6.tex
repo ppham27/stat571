@@ -110,18 +110,75 @@ correlation model, including a nugget (correlation should be based on the timing
 report the
 estimated values of all variance parameters. }
 
+\begin{table}
+  \centering
+  \begin{tabular}{lrr}
+    \toprule
+    & \multicolumn{2}{c}{Model} \\
+    Parameter & Without interaction (Equation \ref{eqn:mean_model_no_interaction}) & With interaction (Equation \ref{eqn:mean_model_interaction}) \\
+    \midrule
+    $\hat{\sigma}^2$ & 0.0693487 & 0.051000981 \\
+    $\hat{\sigma}^2_{\gamma_0}/\hat{\sigma}^2$ & 0.03108841 & 0.3403312 \\
+    $\hat{\sigma}^2_{\gamma_1}/\hat{\sigma}^2$ & 0.0003932786 & 0.000456134 \\
+    $\hat{\alpha}_r$ & 7.8894707 & 4.6700641 \\
+    $\hat{\alpha}_n$ & 0.1759323  & 0.2299764 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Variance parameters for ML-fitted models.}
+  \label{tab:variance_parameters}
+\end{table}
+
 \begin{description}
   The parameter estimates of fitting the model without and with an interaction
   term can be seen in Tables \ref{tab:standard_errors_no_interaction} and
-  \ref{tab:standard_errors_interaction}.
+  \ref{tab:standard_errors_interaction}. The variance parameters can be found in
+  Table \ref{tab:variance_parameters}. Their meaning is detailed in the
+  subsequent paragraphs.
 
+  Let $t_{ij}$ be the age of the subject $i$ at observation $j$. Let $x_i$
+  indicate whether the subject has has kidney disease. Without an interaction
+  term, the mean model is
+  \begin{equation}
+    Y_{ij} = \left(\beta_0 + \gamma_0\right) +
+    \beta_2x_i +
+    \left(\beta_1 + \gamma_1\right)t_{ij} + \epsilon_{ij}.
+    \label{eqn:mean_model_no_interaction}
+  \end{equation}
+  With the interaction term, the mean model is
+  \begin{equation}
+    Y_{ij} = \left(\beta_0 + \gamma_0\right) +
+    \beta_2x_i +
+    \left(\beta_1 + \beta_3x_i +\gamma_1\right)t_{ij} + \epsilon_{ij}.
+    \label{eqn:mean_model_interaction}
+  \end{equation}
+  $\gamma_j$ are the random effects, where $\gamma_0$ is subject-specific
+  adjustment to the intercept, and $\gamma_1$ is the subject-specific adjustment
+  to the slope.
+  
   The covariance structure of a cluster $i$ can be described by the matrix
   \begin{equation}
     \Sigma_i = \sigma^2\left(Z_iGZ_i^\intercal + R_i\right)
     \label{eqn:cluster_covariance}
   \end{equation}
   $Z_i$ is a $m_i \times 2$ matrix, where the first column entries are all $1$s,
-  and the second column entries are ages $t_{ij}$.
+  and the second column entries are ages for each subject $t_{ij}$.
+
+  $G$ is a $2 \times 2$ diagonal matrix that describes the variance of the
+  random effects $\gamma_0$ and $\gamma_1$:
+  \begin{equation}
+    G = \frac{1}{\sigma^2}\begin{pmatrix}
+      \sigma^2_{\gamma_0} & 0 \\
+      0 & \sigma^2_{\gamma_1}
+    \end{pmatrix}
+    \label{eqn:random_effects_covariance}
+  \end{equation}
+
+  $R_i$ is an $m_i \times m_i$ matrix that describes the correlations between
+  the $\epsilon_{ij}$s for different $j$s with a nugget parameter
+  $0 \leq \alpha_n < 1$ and range parameter $\alpha_r > 0$. $R_{ijj} = 1$ and
+  $R_{ijj^\prime} = \left(1 - \alpha_n\right) \exp\left(-\frac{\left\lvert
+        t_{ij} - t_{ij^\prime}\right\rvert}{\alpha_r}\right)$. Estimates for
+  these parameters can be found in Table \ref{tab:variance_parameters}.
 \end{description}
 
 \item {\em  Report point estimates and standard errors for all fixed effect

@@ -12,6 +12,7 @@
 \usepackage{booktabs}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{pdfpages}
 \newcommand*{\justifyheading}{\raggedleft}
 
 
@@ -81,16 +82,16 @@
 contains repeated observational data for 619 subjects, some of whom have hypertension and some
 of whom have a hereditary kidney disease, as indicated by the \texttt{group} variable, according to the coding in the Table~\ref{ta:orig.hw1}.
 \begin{table}[ht]
-\center
+\centering
 \begin{tabular}{cccc}
-\hline
+\toprule
 Group&Kidney disease&Hypertension&Sample size\\
-\hline
+\midrule
 1&Yes&Yes&294\\
 2&Yes&No&103\\
 3&No&Yes&73\\
 4&No&No&149\\
-\hline
+\bottomrule
 \end{tabular}
 \caption{Measurements of serum creatinne reciprocals from 619 subjects in four groups}
 \label{ta:orig.hw1}
@@ -133,7 +134,8 @@ estimated values of all variance parameters. }
   term can be seen in Tables \ref{tab:standard_errors_no_interaction} and
   \ref{tab:standard_errors_interaction}. The variance parameters can be found in
   Table \ref{tab:variance_parameters}. Their meaning is detailed in the
-  subsequent paragraphs.
+  subsequent paragraphs. The \textsf{R} model summaries can be found in the
+  Appendix.
 
   Let $t_{ij}$ be the age of the subject $i$ at observation $j$. Let $x_i$
   indicate whether the subject has has kidney disease. Without an interaction
@@ -188,7 +190,53 @@ account for clustering of the data, (ii) bootstrap SEs that correctly account fo
 \input{standard_errors_no_interaction.tex}
 
 \begin{description}
-\item[Solution:] Table \ref{tab:standard_errors_no_interaction}
+\item[Solution:] See Table \ref{tab:standard_errors_no_interaction} for the
+  standard errors.
+
+  Let $\hat{V}_i$ be the result of substituting the variance parameter estimates
+  in Table \ref{tab:variance_parameters} into Equation
+  \ref{eqn:cluster_covariance}. Let $W_i = \hat{V}_i^{-1}$ be the weight matrix
+  for each cluster. Let $X_i$ be the matrix of cluster covariates, $1$s in the
+  first column, age in the second column, and an indicator for kidney disease in
+  the third column. Let $Y_i$ be the cluster response.
+
+  If we assume the random effect model is correct, then the covariance matrix
+  for the paramter estimates $\hat{\beta}$ is
+  \begin{equation}
+    \hat{\operatorname{var}}\left(\hat{\beta}\right)
+    = \left(\sum_{i=1}^n X_i^\intercal W_iX_i\right)^{-1},
+    \label{eqn:ml_variance}
+  \end{equation}
+  and we take the square root of the diagonals to obtain the standard errors for
+  the ML Standard Error column.
+
+  For the sandwich standard errors, we use the covariance matrix
+  \begin{equation}
+    \small
+    \hat{\operatorname{var}}\left(\hat{\beta}\right)
+    = \left(\sum_{i=1}^n X_i^\intercal W_iX_i\right)^{-1}
+    \left(\sum_{i=1}^n X_i^\intercal W_i
+      \left(Y_i - X_i\hat{\beta}\right)
+      \left(Y_i - X_i\hat{\beta}\right)^\intercal
+      W_iX_i\right)
+    \left(\sum_{i=1}^n X_i^\intercal W_iX_i\right)^{-1},
+    \label{eqn:sandwich_variance}
+  \end{equation}
+  which we use to get the Sandwich Standard Error column.
+
+  For the bootstrap standard errors, we resample clusters, and then fit a model
+  to the resampled clusters to get samples
+  $\hat{\beta}^{(1)}, \hat{\beta}^{(2)},\ldots,\hat{\beta}^{(L)}$. In this case,
+  $L = 2^{10}$. Then, $\hat{\operatorname{var}}\left(\hat{\beta}\right)$ is
+  estimated by taking the unbiased covariance estimate of the samples. Taking
+  the square root of the diagonals gives us the Bootstrap Standard Error column.
+
+  In this case, the standard errors assuming the model is correct and the
+  sandwich standard errors are very similar with the sandwich standard errors
+  being slightly smaller. The bootstrap standard errors are largest. The
+  difference is more than just Monte Carlo error, particularly for $\beta_2$ the
+  coefficient for kidney disease, which hints at its interaction with other
+  covariates.
 \end{description}
 
 \item {\em  Now, give point estimates and three versions of standard error estimates for the marginal rates of change in \texttt{scr} in subjects with and without 
@@ -204,5 +252,13 @@ but you must answer this question based on the output of a single call to \textt
 \end{description}
 
 \end{enumerate}
+
+\section*{Appendix}
+
+Code for fitting models and generating tables is attached on the subsequent
+pages.
+
+\clearpage
+\includepdf[pages=-]{creatinine.pdf}
 
 \end{document}

@@ -130,7 +130,7 @@ estimated values of all variance parameters. }
 \end{table}
 
 \begin{description}
-  The parameter estimates of fitting the model without and with an interaction
+  The parameter estimates for fitting the model without and with an interaction
   term can be seen in Tables \ref{tab:standard_errors_no_interaction} and
   \ref{tab:standard_errors_interaction}. The variance parameters can be found in
   Table \ref{tab:variance_parameters}. Their meaning is detailed in the
@@ -157,7 +157,7 @@ estimated values of all variance parameters. }
   adjustment to the intercept, and $\gamma_1$ is the subject-specific adjustment
   to the slope.
   
-  The covariance structure of a cluster $i$ can be described by the matrix
+  The covariance structure of subject $i$ can be described by the matrix
   \begin{equation}
     \Sigma_i = \sigma^2\left(Z_iGZ_i^\intercal + R_i\right)
     \label{eqn:cluster_covariance}
@@ -191,7 +191,7 @@ account for clustering of the data, (ii) bootstrap SEs that correctly account fo
 
 \begin{description}
 \item[Solution:] See Table \ref{tab:standard_errors_no_interaction} for the
-  standard errors.
+  point estimates and standard errors when no interaction term is included.
 
   Let $\hat{V}_i$ be the result of substituting the variance parameter estimates
   in Table \ref{tab:variance_parameters} into Equation
@@ -231,9 +231,9 @@ account for clustering of the data, (ii) bootstrap SEs that correctly account fo
   estimated by taking the unbiased covariance estimate of the samples. Taking
   the square root of the diagonals gives us the Bootstrap Standard Error column.
 
-  In this case, the standard errors assuming the model is correct and the
-  sandwich standard errors are very similar with the sandwich standard errors
-  being slightly smaller. The bootstrap standard errors are largest. The
+  In this case, the standard errors assuming the random effects model is correct
+  and the sandwich standard errors are very similar with the sandwich standard
+  errors being slightly smaller. The bootstrap standard errors are largest. The
   difference is more than just Monte Carlo error, particularly for $\beta_2$ the
   coefficient for kidney disease, which hints at its interaction with other
   covariates.
@@ -241,14 +241,40 @@ account for clustering of the data, (ii) bootstrap SEs that correctly account fo
 
 \item {\em  Now, give point estimates and three versions of standard error estimates for the marginal rates of change in \texttt{scr} in subjects with and without 
 kidney disease.  As in part (b), your three versions of SE estimates should be:  (i) robust/empirical sandwich SEs that correctly
-account for clustering of the data, (ii) bootstrap SEs that correctly account for clustering of the data, and (iii) model based SE estimates based on the assumed random effect model being correct.  Depending on how you parameterized your model, these answers may or may not 
-coincide with estimates you reported in part (b).  You may parameterize the model any way you wish,
-but you must answer this question based on the output of a single call to \texttt{lme()}.}
+account for clustering of the data, (ii) bootstrap SEs that correctly account for clustering of the data, and (iii) model based SE estimates based on the assumed random effect model being correct.}
 
 \input{standard_errors_interaction.tex}
 
 \begin{description}
-\item[Solution:] Table \ref{tab:standard_errors_interaction}
+\item[Solution:] See Table \ref{tab:standard_errors_interaction} for the
+  estimates and the standard errors for the model that includes the interaction
+  term.
+
+  For subjects without kidney disease, we expect that the observed \texttt{scr}
+  decreases by -0.003108 for each additional year of age. This effect is barely
+  statistically significant: when using the standard error that assumes the
+  random effects model is correct, the upper bound of the 97.5\% confidence
+  interval is greater than 0.
+  
+  For subjects with kidney disease, the expected observed baseline \texttt{scr}
+  is 0.313575 higher. The expected change in observed \texttt{scr} for each
+  additional year of age differs by -0.016649, so the expected observed
+  \texttt{scr} decreases by -0.019757 for each additional year of age for
+  subjects with kidney disease. These effects are all statistically
+  significant. Indeed, we would expect that subjects with kidney disease
+  experience a sharper decline in kidney function with age.
+
+  Standard errors that assume the random effect model is correct and sandwich
+  standard errors are calculated with Equations \ref{eqn:ml_variance} and
+  \ref{eqn:sandwich_variance} as in the previous part. To model the interation
+  term, $X_i$ has an additional column of $x_{i}t_{ij}$s. The same bootstrap
+  procedure of resampling clusters is used.
+
+  In this case, the bootstrap standard errors are almost identical to the
+  sandwich standard errors. Both are smaller than the standard errors that
+  assume the random effects model is correct. This indicates that there is some
+  correlation between the random effects that can be leveraged to get estimates
+  with less variance.
 \end{description}
 
 \end{enumerate}

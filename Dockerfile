@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:1.13.0rc2-py3-jupyter
+FROM tensorflow/tensorflow:1.13.1-py3-jupyter
 
 # Install R
 RUN apt update
@@ -44,9 +44,9 @@ RUN R -e "install.packages(\
   dep=TRUE);"
 
 RUN R -e "install.packages(c(\
+    'clubSandwich',\
     'data.table',\
     'lasso2',\
     'VGAM'),\
   repos='http://cran.us.r-project.org',\
   dep=TRUE);"
-

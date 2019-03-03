@@ -93,7 +93,7 @@ x_{i1}=1+0.1*(i-1),
 \]
 have subsequent follow-ups evenly spaced at intervals of 
 \[
-\Delta x_i = (1 + \frac{10-x_{i1}}{10})^2,
+\Delta x_i = \left(1 + \frac{10-x_{i1}}{10}\right)^2,
 \]
 and consider the fixed (but unknown) mean model implied by $\beta_L=1$ and  $f(x) = (10-x)^2$.
 Initially fix the true variance at $\sigma^2 = 100$, but you will consider different values of $\sigma^2$ later in the problem. }
@@ -105,7 +105,7 @@ Initially fix the true variance at $\sigma^2 = 100$, but you will consider diffe
     \centering
     \includegraphics{literacy_versus_age.pdf}
     \caption{Plot of a single realization of the data with $\sigma^2 = 100$. The
-      lines are OLS linear regression fitted to each subject.}
+      lines are fitted with OLS linear regression conditioned on each subject.}
     \label{fig:literacy_versus_age}
   \end{figure}
 
@@ -130,6 +130,10 @@ as an alternative, adjusting for subject using a random intercept in a linear mi
 \addtocounter{enumi}{1}
 \item{\em   Explain to your collaborator, purely in words, why this is a bad idea.}
 
+  \begin{description}
+  \item[Solution:] 
+  \end{description}
+  
 \end{enumerate}
 
 {\em Although you're sure that your explanation should have been persuausive, your collaborator is not yet convinced.  So you conduct a simulation to 

@@ -66,19 +66,14 @@
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 
+\title{STAT/BIOST 571: Homework 7}
+\author{Philip Pham}
+\date{\today}
+
 \begin{document}
 
+\maketitle
 
-\Large 
-\begin{center}
-\bf STAT/BIOST 571: Homework 6
-\end{center} 
-\normalsize 
-
-To be handed in on Friday, March 8. 
-Where solutions require use of \texttt{R}, summarize your findings in a written answer. For each question, write up your solution on your own, using \textbf{full sentences}.
-
-\textbf{IMPORTANT NOTE: Please include your annotated code in an appendix, to show what you did.}
 \section*{Problem 1: Relationship between fixed effects, random effects, GLS, and penalized regression; confounding; model misspecification (20 points)} 
 
 {\em This is an extension of problem  3 from homework 1.  There are $n$ subjects, indexed by $i=1,\ldots,n$, each one of which is observed at
@@ -104,8 +99,27 @@ and consider the fixed (but unknown) mean model implied by $\beta_L=1$ and  $f(x
 Initially fix the true variance at $\sigma^2 = 100$, but you will consider different values of $\sigma^2$ later in the problem. }
 \begin{enumerate}[(a)]
 \item{\em  Simulate a single realization of data from the model specified above and generate one or more plots that 
-allows you to visualize the marginal and conditional trends in computer literacy.}
+    allows you to visualize the marginal and conditional trends in computer literacy.}
 
+  \begin{figure}
+    \centering
+    \includegraphics{literacy_versus_age.pdf}
+    \caption{Plot of a single realization of the data with $\sigma^2 = 100$. The
+      lines are OLS linear regression fitted to each subject.}
+    \label{fig:literacy_versus_age}
+  \end{figure}
+
+  \begin{description}
+  \item[Solution:] A single realization is plotted in Figure
+    \ref{fig:literacy_versus_age}. By looking at the data from follow period $0$
+    and comparing subjects, one can identify the marginal trend: literacy
+    decreases with the base age, so younger subjects generally have higher
+    literacy. To see the conditional trend, one looks within each subject:
+    generally, as a subject ages, their literacy increases. This conditional
+    trend isn't very strong, however, since the variance is rather large
+    relative to the effect size.
+  \end{description}
+  
 \end{enumerate}
 {\em Based on the plot you have generated (and experience from homework 1), it should be clear that
 trying to estimate $\beta_L$ by fitting a partitioned model in which you treat $f(x)$ as linear will not work.  

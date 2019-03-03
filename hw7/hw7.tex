@@ -9,6 +9,7 @@
 
 \usepackage{amsmath, amsfonts, color}
 \usepackage{bm}
+\usepackage{booktabs}
 \usepackage{enumerate}
 \usepackage{graphicx}
 \newcommand*{\justifyheading}{\raggedleft}
@@ -131,20 +132,32 @@ as an alternative, adjusting for subject using a random intercept in a linear mi
 \item{\em   Explain to your collaborator, purely in words, why this is a bad idea.}
 
   \begin{description}
-  \item[Solution:] 
+  \item[Solution:] See Figure \ref{fig:literacy_by_follow_period}.
   \end{description}
   
 \end{enumerate}
 
+\begin{figure}
+  \centering
+  \includegraphics{literacy_by_follow_period.pdf}
+  \caption{Distribution of literacy by the follow period. One sees that the
+    distribution skews left and is not normal.}
+  \label{fig:literacy_by_follow_period}
+\end{figure}
+
 {\em Although you're sure that your explanation should have been persuausive, your collaborator is not yet convinced.  So you conduct a simulation to 
 further elucidate the differences between estimating $\beta_L$ from models with
 fixed effects and random effects for subject-specific intercepts.  }
+
 \begin{enumerate}[(a)]
 \addtocounter{enumi}{2}
 \item {\em Write down the mathematical form of the two models you will be fitting and describe the simulation study.}
 
 
+
 \item {\em  Present and explain the results of your simulation study to your collaborator, highlighting the simulation-based estimates of bias and standard errors of the $\hat{\beta}_L$ you obtain from each model and how these relate to his suggestion.}
+
+  \input{simulation_comparison.tex}
 
 
 \item {\em  Summarize the estimated values of the residual and random effect variances ($\hat{\sigma}^2$ and $\hat{\sigma}^2_\gamma$, respectively) from your simulations.}

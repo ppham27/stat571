@@ -47,6 +47,7 @@ RUN R -e "install.packages(c(\
     'clubSandwich',\
     'data.table',\
     'lasso2',\
+    'penalized',\
     'VGAM'),\
   repos='http://cran.us.r-project.org',\
   dep=TRUE);"

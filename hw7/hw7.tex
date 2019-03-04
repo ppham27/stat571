@@ -7,7 +7,7 @@
 \addtolength{\topmargin}{-1in}
 \setlength{\parskip}{0.1in}
 
-\usepackage{amsmath, amsfonts, color}
+\usepackage{amsmath, amsfonts, amssymb, color}
 \usepackage{bm}
 \usepackage{booktabs}
 \usepackage{enumerate}
@@ -129,12 +129,15 @@ subject.  Your collaborator is sympathetic to the need to deal with confounding 
 as an alternative, adjusting for subject using a random intercept in a linear mixed effects model (fit using REML, of course).}
 \begin{enumerate}[(a)]
 \addtocounter{enumi}{1}
-\item{\em   Explain to your collaborator, purely in words, why this is a bad idea.}
-
+\item{\em Explain to your collaborator, purely in words, why this is a bad idea.}
   \begin{description}
-  \item[Solution:] See Figure \ref{fig:literacy_by_follow_period}.
+  \item[Solution:] The random effects model assumes that the subject-specific
+    adjustments to the intercept are normally distributed. This is not the
+    case. See the histograms in Figure \ref{fig:literacy_by_follow_period}. In
+    particular, look at the base literacy rate in follow period 0. This
+    distribution is not normal and skews left. Thus, a random effects model
+    would not properly account for the subject-specific variation.
   \end{description}
-  
 \end{enumerate}
 
 \begin{figure}
@@ -153,12 +156,63 @@ fixed effects and random effects for subject-specific intercepts.  }
 \addtocounter{enumi}{2}
 \item {\em Write down the mathematical form of the two models you will be fitting and describe the simulation study.}
 
+  \begin{description}
+  \item[Solution:] Let $Y_i$ be the observed literacy rates for subject $i$. Let
+    $X_i$ be the covariates for subject $i$: an $m \times 2$ matrix of $1$s in
+    the first column and delta ages in the second. $\beta = \begin{pmatrix}
+      \beta_0 & \beta_L
+    \end{pmatrix}^\intercal$ are the fixed effect coefficients for the intercept
+    and delta age.
+
+    In the random effects model, we have that
+    \begin{align}
+      Y_i
+      &= X_i\beta + \mathbf{1}\gamma_i + \epsilon_i
+        \label{eqn:random_effects_model} \\
+      \gamma_i
+      &\sim \mathcal{N}\left(0, \sigma_\gamma^2\right) \nonumber \\
+      \epsilon_{ij}
+      &\sim \mathcal{N}\left(0, \sigma^2\right). \nonumber
+    \end{align}
+    The $\gamma_i$ induces within-subject correlation. This model will be fit
+    with a restricted maximum likelihood (REML) procedure.
+
+    In the fixed effects model, we have that
+    \begin{align}
+      Y_i
+      &= \begin{cases}
+        X_i\beta + \epsilon_i, & i = 1 \\
+        X_i\beta + \mathbf{1}\alpha_i + \epsilon_i, & i \neq 1
+      \end{cases} \label{eqn:fixed_effects_model} \\
+      \epsilon_{ij}
+      &\sim \mathcal{N}\left(0, \sigma^2\right). \nonumber
+    \end{align}
+    The $\alpha_i$ are subject-specific intercepts and considered fixed effects
+    in this case. We can fit this model with ordinary least squares (OLS)
+    regression that maximizes likelihood.
+  \end{description}
 
 
 \item {\em  Present and explain the results of your simulation study to your collaborator, highlighting the simulation-based estimates of bias and standard errors of the $\hat{\beta}_L$ you obtain from each model and how these relate to his suggestion.}
 
   \input{simulation_comparison.tex}
 
+  \begin{description}
+  \item[Solution:] $2^{12}$ simulations were done for each model. Equation
+    \ref{eqn:random_effects_model} is used in the random effects intercept
+    model, and Equation \ref{eqn:fixed_effects_model} is used in the fixed
+    effects intercept model. The results can be seen in Table
+    \ref{tab:simulation_comparison}.
+
+    The random effects model has significant bias and overestimates $\beta_L$,
+    which has true value $\beta_L = 1$, whereas the fixed effects model appears
+    unbiased. The random effects model underestimates the subject-specific
+    intercepts and compensates by overestimating $\beta_L$.
+
+    The standard errors of both models agree. The model-based standard errors
+    also agree with the simulated standard errors in both models.   
+  \end{description}
+  
 
 \item {\em  Summarize the estimated values of the residual and random effect variances ($\hat{\sigma}^2$ and $\hat{\sigma}^2_\gamma$, respectively) from your simulations.}
 
@@ -175,6 +229,8 @@ exactly, meaning $\sigma^2=\hat{\sigma}^2=100$ and $\sigma^2_\gamma=\hat{\sigma}
 \item {\em Calculate the exact (to your computer's numerical precision) bias of $\hat{\beta}_L$ from the random effect model as an estimator for $\beta_L$.  Report your answer to five significant digits.  Do this calculation two ways, first by interpreting the estimation procedure as GLS regression and then by interpreting it as penalized OLS regression.   You cannot answer this question with a simulation study, but you are free to use either your own R code or any publicly available R packages for the calculations.  You may find the 
 \texttt{penalized} package in R helpful.  Note that although we have seen a theorem that implies these two approaches will give precisely the same answer, in this
 problem you are asked to find the solution two separate ways, without using your knowledge that they are equivalent.  }
+
+
 \item  {\em Using the calculation from part (g) of this problem, plot the bias of $\hat{\beta}_L$ as
 a function of $\sigma^2$, over an interesting range of choices for $\sigma^2$ (continue to use the same fixed value
 of $\sigma^2_\gamma$ you estimated from the data).}

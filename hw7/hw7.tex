@@ -216,10 +216,39 @@ fixed effects and random effects for subject-specific intercepts.  }
 
 \item {\em  Summarize the estimated values of the residual and random effect variances ($\hat{\sigma}^2$ and $\hat{\sigma}^2_\gamma$, respectively) from your simulations.}
 
+  \begin{description}
+  \item[Solution:] $\sigma^2$ measures the variance from the $\epsilon_{ij}$
+    term in the model, which is the error in each individual observation. The
+    estimated value of the residual variance $\hat{\sigma}^2$ is very accurate
+    in both models. See the square root in the
+    $\mathbb{E}\left[\hat{\sigma}\right]$ column of
+    Table \ref{tab:simulation_comparison}. The actual value is $10$.
 
+    $\sigma^2_L$ measures the variance associated from the $\gamma_i$ term in
+    the model, which accounts for subject-level differences. It's only estimated
+    in the random effects model by $\hat{\sigma}^2_\gamma$.
+  \end{description}
+  
 \item {\em  Although the subject-specific intercepts in this problem are not really random, there is a natural quantity that you can think of $\hat{\sigma}^2_\gamma$ as trying to estimate.  Calculate this number and call
-it $\sigma_\gamma^2$.  Explain how your estimates $\hat{\sigma}^2_\gamma$ compare to  $\sigma_\gamma^2$.}
+    it $\sigma_\gamma^2$.  Explain how your estimates $\hat{\sigma}^2_\gamma$ compare to  $\sigma_\gamma^2$.}
 
+  \begin{description}
+  \item[Solution:] $\sigma_\gamma^2$ can be thought of as the variance in the
+    base literacy score. In this case, the base literacy score for subject $i$
+    is $f\left(x_{i1}\right) = f\left(1+0.1(i-1)\right)$.
+
+    We have that the standard error in base literacy is
+    \begin{equation}
+      \sigma_\gamma = \sqrt{\frac{1}{n}\sum_{i=1}^n\left(
+          f\left(x_{i1}\right) - \frac{1}{n}\sum_{j=1}^nf\left(x_{1}\right)
+        \right)^2} \approx 24.433055478.
+      \label{eqn:sigma_gamma}
+    \end{equation}
+    Indeed, this number is very close to our estimate in the
+    $\mathbb{E}\left[\hat{\sigma}_\gamma\right]$ column of Table
+    \ref{tab:simulation_comparison}.
+  \end{description}
+  
 \end{enumerate}
 
 {\em For the remainder of the problem, consider the idealized situation where REML always estimates the variances
@@ -230,6 +259,47 @@ exactly, meaning $\sigma^2=\hat{\sigma}^2=100$ and $\sigma^2_\gamma=\hat{\sigma}
 \texttt{penalized} package in R helpful.  Note that although we have seen a theorem that implies these two approaches will give precisely the same answer, in this
 problem you are asked to find the solution two separate ways, without using your knowledge that they are equivalent.  }
 
+\begin{description}
+\item[Solution:] The random effects model implies a subject-specific covariance
+  structure of
+  \begin{equation}
+    \Sigma_i = \sigma^2_\gamma\mathbf{1}\mathbf{1}^\intercal + \sigma^2I,
+    \label{eqn:sigma_i}
+  \end{equation}
+  where we use Equation \ref{eqn:sigma_gamma} to compute
+  $\sigma_\gamma^2$. Using Equation \ref{eqn:sigma_i}, we can compute
+  $\hat{\beta}$ with the generalized least squares (GLS) estimator:
+  \begin{equation}
+    \hat{\beta}_{\text{GLS}} = \left(\sum_{i=1}^nX_i^\intercal \Sigma_i^{-1}X_i\right)^{-1}
+    \sum_{i=1}^n X_i\Sigma_i^{-1}Y_i.
+    \label{eqn:beta_hat_gls}
+  \end{equation}
+
+  Let $Y$ be the concatenation of the $Y_i$. Let $X$ be the $nm \times (n + 2)$
+  design matrix for an overspecified OLS problem. The first two columns are a
+  result of stacking the $X_i$ and the last $j + 2$ column represents an
+  indicator for subject $j$. The first 2 coefficients are the fixed effects, and
+  the remaining $n$ are random effects, which we want to penalize. In penalized
+  OLS regression, we are minimizing the mean squared error with an additional
+  penalty term:
+  \begin{align}
+    \hat{\beta}_{\text{OLS}}
+    &= \argmin_{\beta}\left[
+      \left(Y - X\beta\right)^\intercal\left(Y - X\beta\right)
+      +
+      \beta^\intercal Q\beta
+      \right] \label{eqn:penalized_ols_objective}\\
+    \text{where}~
+    Q &= \begin{pmatrix}
+      0 \cdot I_2 & \mathbf{0} \\
+      \mathbf{0} & \frac{\sigma^2}{\sigma_\gamma^2} \cdot I_n
+    \end{pmatrix}, \nonumber
+  \end{align}
+  which means the fixed effects are not penalized, and the random effects are
+  penalized with weight $\frac{\sigma^2}{\sigma_\gamma^2}$ as in slide 3.70 of
+  the course notes.
+  
+\end{description}
 
 \item  {\em Using the calculation from part (g) of this problem, plot the bias of $\hat{\beta}_L$ as
 a function of $\sigma^2$, over an interesting range of choices for $\sigma^2$ (continue to use the same fixed value

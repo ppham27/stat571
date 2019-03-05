@@ -12,6 +12,7 @@
 \usepackage{booktabs}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{pdfpages}
 \newcommand*{\justifyheading}{\raggedleft}
 
 
@@ -198,7 +199,7 @@ fixed effects and random effects for subject-specific intercepts.  }
   \input{simulation_comparison.tex}
 
   \begin{description}
-  \item[Solution:] $2^{12}$ simulations were done for each model. Equation
+  \item[Solution:] $2^{13}$ simulations were done for each model. Equation
     \ref{eqn:random_effects_model} is used in the random effects intercept
     model, and Equation \ref{eqn:fixed_effects_model} is used in the fixed
     effects intercept model. The results can be seen in Table
@@ -255,13 +256,14 @@ fixed effects and random effects for subject-specific intercepts.  }
 exactly, meaning $\sigma^2=\hat{\sigma}^2=100$ and $\sigma^2_\gamma=\hat{\sigma}^2_\gamma$.}
 \begin{enumerate}[(a)]
 \addtocounter{enumi}{6}
-\item {\em Calculate the exact (to your computer's numerical precision) bias of $\hat{\beta}_L$ from the random effect model as an estimator for $\beta_L$.  Report your answer to five significant digits.  Do this calculation two ways, first by interpreting the estimation procedure as GLS regression and then by interpreting it as penalized OLS regression.   You cannot answer this question with a simulation study, but you are free to use either your own R code or any publicly available R packages for the calculations.  You may find the 
-\texttt{penalized} package in R helpful.  Note that although we have seen a theorem that implies these two approaches will give precisely the same answer, in this
-problem you are asked to find the solution two separate ways, without using your knowledge that they are equivalent.  }
+\item {\em Calculate the exact (to your computer's numerical precision) bias of $\hat{\beta}_L$ from the random effect model as an estimator for $\beta_L$.  Report your answer to five significant digits.  Do this calculation two ways, first by interpreting the estimation procedure as GLS regression and then by interpreting it as penalized OLS regression.}
 
 \begin{description}
-\item[Solution:] The random effects model implies a subject-specific covariance
-  structure of
+\item[Solution:] Thre random effects model described in Equation
+  \ref{eqn:random_effects_model} estimates $\beta_L$ with a bias of
+  $\boxed{0.27288324.}$ The calculations are described below.
+
+  The random effects model implies a subject-specific covariance structure of
   \begin{equation}
     \Sigma_i = \sigma^2_\gamma\mathbf{1}\mathbf{1}^\intercal + \sigma^2I,
     \label{eqn:sigma_i}
@@ -274,6 +276,8 @@ problem you are asked to find the solution two separate ways, without using your
     \sum_{i=1}^n X_i\Sigma_i^{-1}Y_i.
     \label{eqn:beta_hat_gls}
   \end{equation}
+  Equation \ref{eqn:beta_hat_gls} is implemented in
+  \texttt{expect.beta.hat.gls}.
 
   Let $Y$ be the concatenation of the $Y_i$. Let $X$ be the $nm \times (n + 2)$
   design matrix for an overspecified OLS problem. The first two columns are a
@@ -298,18 +302,124 @@ problem you are asked to find the solution two separate ways, without using your
   which means the fixed effects are not penalized, and the random effects are
   penalized with weight $\frac{\sigma^2}{\sigma_\gamma^2}$ as in slide 3.70 of
   the course notes.
+
+  This is just ridge regression and has the closed-formed solution:
+  \begin{equation}
+    \hat{\beta}_{\text{OLS}}
+    = \begin{pmatrix}
+      \hat{\beta}_0 \\
+      \hat{\beta}_L \\
+      \hat{\gamma}_1 \\
+      \hat{\gamma}_2 \\
+      \vdots \\
+      \hat{\gamma}_n
+    \end{pmatrix}
+    = \left(X^\intercal X + Q\right)^{-1}X^\intercal Y.
+    \label{eqn:beta_hat_ols_closed_form}
+  \end{equation}
+  Equation \ref{eqn:beta_hat_ols_closed_form} is implemented in
+  \texttt{expect.beta.hat.ridge}.
   
+  Applying Equation \ref{eqn:beta_hat_ols_closed_form} means solving a system of
+  equations with $O(n)$ variables, which has complexity $O\left(n^3\right)$. If
+  this is too expensive, gradient-based methods applied to Equation
+  \ref{eqn:penalized_ols_objective} can be used. The gradient-based method is
+  implemented in \texttt{expect.beta.hat.penalized} and relies on the
+  \texttt{penalized} package.
+
+  With $\sigma^2 = 100$, all three functions produce
+  $\mathbb{E}\left[\hat{\beta}_L\right] = 1.27288324$, so there is bias of
+  $\boxed{0.27288324}$ in the random effects model. This agrees with the results
+  of the simulation study in Table \ref{tab:simulation_comparison}.
+
+  It turns out that the closed form solution to ridge regression in Equation
+  \ref{eqn:beta_hat_ols_closed_form} is fastest.
 \end{description}
 
 \item  {\em Using the calculation from part (g) of this problem, plot the bias of $\hat{\beta}_L$ as
 a function of $\sigma^2$, over an interesting range of choices for $\sigma^2$ (continue to use the same fixed value
 of $\sigma^2_\gamma$ you estimated from the data).}
+
+\begin{figure}
+  \centering
+  \includegraphics{bias_variance_plot.pdf}
+  \caption{The bias of $\hat{\beta}_L$ is calculated with Equation
+    \ref{eqn:beta_hat_ols_closed_form} varying $\sigma^2$ from $10^{-1}$ to
+    $10^3$.}
+  \label{fig:bias_variance}
+\end{figure}
+
+\begin{description}
+\item[Solution:] See Figure \ref{fig:bias_variance}. The bias increases with
+  $\sigma^2$.
+\end{description}
+
 \item {\em Explain your plot from part (h) of this problem to your collaborator.  Offer two explanations for the pattern in the plot, one based on the clustered WLS (equivalently, GLS) intepretation and the other based on the penalized OLS interpretation of the linear mixed effects model estimation algorithm.}
+
+  \begin{description}
+  \item[Solution:] Recall the model in Equation
+    \ref{eqn:random_effects_model}. Consider the random vectors
+    $Y_i - X_i\beta = \mathbf{1}\gamma_i + \epsilon_i$ obtained from subtracting
+    out the fixed effects. The residuals can be decomposed into a within-subject
+    and independent component.
+
+    \begin{description}
+    \item[GLS:] From the GLS perspective, the random vector has distribution
+      $\mathcal{N}\left(\mathbf{0}, \Sigma_i\right)$, where $\Sigma_i$ takes the
+      form in Equation \ref{eqn:sigma_i}, and we're maximizing likelihood.
+
+      Small values of $\sigma^2$ mean that the entries of the random vector are
+      highly correlated, so each entry of the random vector should be almost
+      identical. In this way, the model is encouraged to find the subject effect
+      $f\left(x_{i1}\right)$ of the true model. The model weights the
+      $\mathbf{1}\gamma_i$ term appropriately, and the bias of $\hat{\beta}_L$
+      is small.
+
+      Large values of $\sigma^2$ mean the entries of the random vector are
+      uncorrelated, so there is no need to choose $\hat{\beta}$ such that the
+      entries of the random vector are similar. The model is not able to
+      disentangle the subject effect $f\left(x_{i1}\right)$ from the noise
+      random vector $\epsilon_i$. The difference between a subject's base
+      literacy and $\beta_0$ is considered noise. Base literacy skews left (see
+      Figure \ref{fig:literacy_by_follow_period}), so $\beta_0$ is
+      underestimated. The model compensates by overestimating $\beta_L$. As
+      $\sigma^2 \rightarrow \infty$, the model approaches the OLS estimates.
+      
+    \item[Penalized OLS:] From the penalized OLS perspective, there is no
+      within-subject correlation structure. The $\gamma_i$ are just additional
+      fixed effects that are encouraged to be close to $0$ by the objective
+      function in Equation \ref{eqn:penalized_ols_objective}. $\sigma^2$ is
+      proportional to the penalty.
+
+      When the penalty is small, $\gamma_i$ are allowed to vary freely. Since
+      the true model will minimize the expected mean squared error,
+      $\gamma_i \rightarrow f\left(x_{i1}\right) - \beta_0$ as
+      $\sigma^2 \rightarrow 0$. Thus, we estimate $\beta_L$ with small bias.
+
+      When the penalty is large, $\gamma_i$ are pushed towards $0$. As
+      $\sigma^2$ gets large, the penalized OLS estimate approaches the estimate
+      of OLS with just two coefficients $\beta_0$ and $\beta_L$. Without these
+      additional effects, the left skew of base literacy results in
+      underestimating $\beta_0$ (see Figure
+      \ref{fig:literacy_by_follow_period}). To fit the data better in this
+      situation, $\beta_L$ is overestimated.
+    \end{description}
+  \end{description}
 \item {\em Your collaborator is nearly convinced, but not quite.  He reminds you that you
 once told him mixed model effect estimates can be thought of as solutions to a GLS problem and that
 any old GLS estimator will do (regardless of correlation structure) to consistently estimate the 
-coefficients in a linear regression model.  Explain why this argument doesn't apply in the present situation.}
+coefficients in a linear regression model. Explain why this argument doesn't apply in the present situation.}
+
+\begin{description}
+\item[Solution:] For the GLS estimator to be unbiased, the residuals must h
+\end{description}
 \end{enumerate}
 
+\section*{Appendix}
+
+The following pages contain code to reproduce tables and plots. Functions to
+computed the expected value of $\hat{\beta}$ are implemented.
+\clearpage
+\includepdf[pages=-]{literacy.pdf}
 
 \end{document}

@@ -273,7 +273,7 @@ exactly, meaning $\sigma^2=\hat{\sigma}^2=100$ and $\sigma^2_\gamma=\hat{\sigma}
   $\hat{\beta}$ with the generalized least squares (GLS) estimator:
   \begin{equation}
     \hat{\beta}_{\text{GLS}} = \left(\sum_{i=1}^nX_i^\intercal \Sigma_i^{-1}X_i\right)^{-1}
-    \sum_{i=1}^n X_i\Sigma_i^{-1}Y_i.
+    \sum_{i=1}^n X_i^\intercal\Sigma_i^{-1}Y_i.
     \label{eqn:beta_hat_gls}
   \end{equation}
   Equation \ref{eqn:beta_hat_gls} is implemented in
@@ -326,6 +326,11 @@ exactly, meaning $\sigma^2=\hat{\sigma}^2=100$ and $\sigma^2_\gamma=\hat{\sigma}
   \ref{eqn:penalized_ols_objective} can be used. The gradient-based method is
   implemented in \texttt{expect.beta.hat.penalized} and relies on the
   \texttt{penalized} package.
+
+  For both Equations \ref{eqn:penalized_ols_objective} and
+  \ref{eqn:beta_hat_ols_closed_form}, we can use linearity of expectation to
+  calculate the expected value,
+  $\mathbb{E}\left[Y_{ij}\right] = f\left(x_{i1}\right) + \beta_Lx_{ij}$.
 
   With $\sigma^2 = 100$, all three functions produce
   $\mathbb{E}\left[\hat{\beta}_L\right] = 1.27288324$, so there is bias of
@@ -411,7 +416,43 @@ any old GLS estimator will do (regardless of correlation structure) to consisten
 coefficients in a linear regression model. Explain why this argument doesn't apply in the present situation.}
 
 \begin{description}
-\item[Solution:] For the GLS estimator to be unbiased, the residuals must h
+\item[Solution:] Consider the GLS estimator in Equation \ref{eqn:beta_hat_gls}. We have
+  \begin{align}
+    \mathbb{E}\left[\hat{\beta}_{\text{GLS}}\right]
+    &=
+    \left(\sum_{i=1}^nX_i^\intercal \Sigma_i^{-1}X_i\right)^{-1}
+      \sum_{i=1}^n X_i^\intercal\Sigma_i^{-1}\mathbb{E}\left[Y_i\right] \\
+    &= \left(\sum_{i=1}^nX_i^\intercal \Sigma_i^{-1}X_i\right)^{-1}
+      \sum_{i=1}^n X_i^\intercal\Sigma_i^{-1}\mathbb{E}\left[X_i\beta + \mathbf{1}\gamma_i + \epsilon_i\right] \nonumber\\
+    &= \beta + \left(\sum_{i=1}^nX_i^\intercal \Sigma_i^{-1}X_i\right)^{-1}
+      \sum_{i=1}^n X_i^\intercal\Sigma_i^{-1}\mathbf{1}\mathbb{E}\left[\gamma_i\right]. \nonumber
+  \end{align}
+  The GLS estimator is only unbiased if and only if
+  $\left(\sum_{i=1}^nX_i^\intercal \Sigma_i^{-1}X_i\right)^{-1}\sum_{i=1}^n
+  X_i^\intercal\Sigma_i^{-1}\mathbf{1}\mathbb{E}\left[\gamma_i\right] =
+  \mathbf{0}$.
+
+  In the true model, the $\gamma_i$ are not random. They are fixed
+  $\gamma_i = f\left(x_{i1}\right) - \beta_0$, where
+  $\beta_0 = \frac{1}{n}\sum_{i=1}^nf\left(x_{i1}\right)$. A realization of the
+  $f\left(x_{i1}\right)$ with noise can be seen in Figure
+  \ref{fig:literacy_by_follow_period} in the follow period $0$ histogram. The
+  distribution skews left and is not normal. Morever, in Figure
+  \ref{fig:literacy_versus_age}, one sees that it's value is correlated with
+  $x_{i1}$.
+
+  GLS is fitted by maximizing likelihood and assumes normality, so it adjusts
+  the estimate of $\hat{\beta}$ so that the distribution of the
+  $\hat{\gamma}_{i} = Y_{ij} - \hat{\beta}_0 - \hat{\beta}_{L}x_{ij}$ fits a
+  normal distribution with mean $0$. $\gamma_i$ is the source of within-subject
+  correlation. In this way, there is a tension between correctly accounting for
+  the within-subject correlation and having the residuals $Y_{i} - X_{i}\beta$
+  maximize the multivariate normal likelihood model.
+
+  Given that the true distribution is not normal, the fitting procedure must
+  choose biased values for $\hat{\beta}$. In particular, the left skew results
+  in an underestimate of $\beta_0$. To better fit the data, $\beta_L$ must then
+  be overestimated.
 \end{description}
 \end{enumerate}
 

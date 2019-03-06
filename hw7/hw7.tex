@@ -427,7 +427,7 @@ coefficients in a linear regression model. Explain why this argument doesn't app
     &= \beta + \left(\sum_{i=1}^nX_i^\intercal \Sigma_i^{-1}X_i\right)^{-1}
       \sum_{i=1}^n X_i^\intercal\Sigma_i^{-1}\mathbf{1}\mathbb{E}\left[\gamma_i\right]. \nonumber
   \end{align}
-  The GLS estimator is only unbiased if and only if
+  The GLS estimator is unbiased if and only if
   $\left(\sum_{i=1}^nX_i^\intercal \Sigma_i^{-1}X_i\right)^{-1}\sum_{i=1}^n
   X_i^\intercal\Sigma_i^{-1}\mathbf{1}\mathbb{E}\left[\gamma_i\right] =
   \mathbf{0}$.
@@ -438,7 +438,7 @@ coefficients in a linear regression model. Explain why this argument doesn't app
   $f\left(x_{i1}\right)$ with noise can be seen in Figure
   \ref{fig:literacy_by_follow_period} in the follow period $0$ histogram. The
   distribution skews left and is not normal. Morever, in Figure
-  \ref{fig:literacy_versus_age}, one sees that it's value is correlated with
+  \ref{fig:literacy_versus_age}, one sees that its value is correlated with
   $x_{i1}$.
 
   GLS is fitted by maximizing likelihood and assumes normality, so it adjusts
@@ -447,7 +447,9 @@ coefficients in a linear regression model. Explain why this argument doesn't app
   normal distribution with mean $0$. $\gamma_i$ is the source of within-subject
   correlation. In this way, there is a tension between correctly accounting for
   the within-subject correlation and having the residuals $Y_{i} - X_{i}\beta$
-  maximize the multivariate normal likelihood model.
+  maximizing the likelihood of the multivariate normal model,
+  $Y_i - X_{i}\beta \sim \mathcal{N}\left(\mathbf{0}, \Sigma_i\right)$, where
+  $\Sigma_i$ is defined Equation \ref{eqn:sigma_i}.
 
   Given that the true distribution is not normal, the fitting procedure must
   choose biased values for $\hat{\beta}$. In particular, the left skew results
@@ -459,7 +461,7 @@ coefficients in a linear regression model. Explain why this argument doesn't app
 \section*{Appendix}
 
 The following pages contain code to reproduce tables and plots. Functions to
-computed the expected value of $\hat{\beta}$ are implemented.
+compute the expected value of $\hat{\beta}$ are implemented.
 \clearpage
 \includepdf[pages=-]{literacy.pdf}
 

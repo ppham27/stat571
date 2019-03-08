@@ -78,11 +78,12 @@
 
 \section*{Problem 1: Relationship between fixed effects, random effects, GLS, and penalized regression; confounding; model misspecification (20 points)} 
 
-{\em This is an extension of problem  3 from homework 1.  There are $n$ subjects, indexed by $i=1,\ldots,n$, each one of which is observed at
-$m$ follow-up times, indexed by $j=1,\ldots,m$.  Let $Y_{ij}$ be the literacy score of subject $i$ at follow-up time $j$, at which time the subject's age is $x_{ij}$.  
-The design is fixed, meaning that the $x_{ij}$ are all
-deterministic and known in advance, and the true data-generating
-mechanism can be written
+{\em There are $n$ subjects, indexed by $i=1,\ldots,n$, each one of which is
+  observed at $m$ follow-up times, indexed by $j=1,\ldots,m$.  Let $Y_{ij}$ be
+  the literacy score of subject $i$ at follow-up time $j$, at which time the
+  subject's age is $x_{ij}$.  The design is fixed, meaning that the $x_{ij}$ are
+  all deterministic and known in advance, and the true data-generating mechanism
+  can be written
 \[
 Y_{ij}=f(x_{i1})+\beta_L(x_{ij}-x_{i1})+\epsilon_{ij}
 \]

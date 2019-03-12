@@ -46,6 +46,8 @@ RUN R -e "install.packages(\
 RUN R -e "install.packages(c(\
     'clubSandwich',\
     'data.table',\
+    'gee',\
+    'geepack',\
     'lasso2',\
     'penalized',\
     'VGAM'),\

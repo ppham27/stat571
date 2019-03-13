@@ -9,8 +9,12 @@
 
 \usepackage{amsmath, amsfonts, color}
 \usepackage{bm}
+\usepackage{booktabs}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{pdfpages}
+\usepackage{placeins}
 \newcommand*{\justifyheading}{\raggedleft}
 
 
@@ -94,6 +98,24 @@ In all analyses, we account for correlation within children and assume the data 
 {\em \item  Fit model~(\ref{eq:interact}) using GEE with independence and exchangeable working
 correlation models and using a standard GLMM with random intercepts.  Report point estimates and standard error estimates 
 for all four regression coefficients and all three model fits in a single table (use robust standard errors for GEE and model-based versions for GLMM).}
+
+\begin{table}[ht]
+  \scriptsize
+  \centering
+  \input{model_interaction_full_data_fit.tex}
+  \caption{Model fits of Equation \ref{eq:interact} with different correlation
+    structures to the data in \texttt{fluoride.csv}.}
+  \label{tab:model_interaction_full_data_fit}
+\end{table}
+
+\begin{description}
+\item[Solution:] The estimates and standard errors can be found in Table
+  \ref{tab:model_interaction_full_data_fit}. Robust sandwich estimates were used
+  for standard errors in the GEE model. For the Mixed Model correlation
+  structure with random intercepts, model-based standard errors were used.
+
+  Code to fit the models is found in the Appendix.
+\end{description}
 {\em \item Discuss any differences between the estimated values of $\beta_1$ from your three fitted models.}
 {\em \item For each of your three fitted models, write a short paragraph summarizing your main findings.  Specifically, give scientifically interpretable statements (including confidence intervals) about the relationships between fluoride intake and age
 in children with maternal income greater than 30 thousand dollars per year and
@@ -110,7 +132,13 @@ this problem.
 \end{enumerate}
 
 
+\FloatBarrier
 
+\section*{Appendix}
+
+Code to fit the models is attached on the following pages.
+
+\includepdf[pages=-]{flouride.pdf}
 
 \end{document}
 

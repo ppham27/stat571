@@ -130,6 +130,22 @@ for all four regression coefficients and all three model fits in a single table 
 {\em \item For each of your three fitted models, write a short paragraph summarizing your main findings.  Specifically, give scientifically interpretable statements (including confidence intervals) about the relationships between fluoride intake and age
 in children with maternal income greater than 30 thousand dollars per year and
 in children with maternal income less than 30 thousand dollars per year.}
+\begin{description}
+\item[Solution:] $\beta_1$ describes the expected observed change in the log
+  odds in children with maternal income less than 30 thousand dollars. Given a
+  year of ageing, one would expect to observe a change of $\beta_1$. As
+  discussed in the previous section, this quantity is negative. A 95\%
+  confidence interval can be found by using the standard error.
+
+  $\beta_1 + \beta_3$ describes the change in children with maternal income
+  greater than 30 thousand dollars per year. This quantity has variance
+  \begin{equation}
+    \operatorname{var}\left(\beta_1 + \beta_3\right)
+    = \operatorname{var}\left(\beta_1\right) + \operatorname{var}\left(\beta_3\right) +
+    2\operatorname{cov}\left(\beta_1, \beta_3\right),
+  \end{equation}
+  which we can use to calculate confidence interals.
+\end{description}
 {\em \item Now repeat part (a), but use model~(\ref{eq:nointeract}) instead of~(\ref{eq:interact}) (there are now only two regression coefficients to report per model).}
 {\em \item Download the dataset \texttt{fluoride.miss.csv} from the course website and repeat the calculations from part (d).  Note \texttt{fluoride.miss.csv} is a subset of \texttt{fluoride.csv}, with more missing data.}
 {\em \item  Discuss the differences between your results in parts (d) and (e).  Speculate

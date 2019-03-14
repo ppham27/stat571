@@ -117,6 +117,16 @@ for all four regression coefficients and all three model fits in a single table 
   Code to fit the models is found in the Appendix.
 \end{description}
 {\em \item Discuss any differences between the estimated values of $\beta_1$ from your three fitted models.}
+\begin{description}
+\item[Solution:] In all three models, $\beta_1$ is negative. For those with low
+  income, one is more likely to have low fluoride as one ages. See the second
+  row of Table \ref{tab:model_interaction_full_data_fit} for the values.
+
+  The effect is most pronounced in the mixed model which lets the intercept term
+  vary most freely since each subject has a subject-specific adjustment. The
+  exchangeable model encourages within-subject correlation, so it prefers that
+  the log odds does not vary much with age.
+\end{description}
 {\em \item For each of your three fitted models, write a short paragraph summarizing your main findings.  Specifically, give scientifically interpretable statements (including confidence intervals) about the relationships between fluoride intake and age
 in children with maternal income greater than 30 thousand dollars per year and
 in children with maternal income less than 30 thousand dollars per year.}

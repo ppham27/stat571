@@ -131,38 +131,101 @@ for all four regression coefficients and all three model fits in a single table 
 in children with maternal income greater than 30 thousand dollars per year and
 in children with maternal income less than 30 thousand dollars per year.}
 \begin{description}
+  \input{beta_1_intervals.tex}
+  \input{beta_1_3_intervals.tex}
 \item[Solution:] $\beta_1$ describes the expected observed change in the log
   odds in children with maternal income less than 30 thousand dollars. Given a
   year of ageing, one would expect to observe a change of $\beta_1$. As
   discussed in the previous section, this quantity is negative. A 95\%
-  confidence interval can be found by using the standard error.
+  confidence interval can be found by using the standard error. These results
+  can be seen in Table \ref{tab:beta_1_intervals}. For the GEE Exchangeable
+  model and Mixed Model, the intervals contain $0$, so only in the GEE
+  Indepedent model is the decrease in log odds statistically significant at
+  level $\alpha = 0.0t$. Thus, I'd conclude that the effect is quite small if it
+  exists at all.
 
   $\beta_1 + \beta_3$ describes the change in children with maternal income
   greater than 30 thousand dollars per year. This quantity has variance
   \begin{equation}
     \operatorname{var}\left(\beta_1 + \beta_3\right)
     = \operatorname{var}\left(\beta_1\right) + \operatorname{var}\left(\beta_3\right) +
-    2\operatorname{cov}\left(\beta_1, \beta_3\right),
+    2\operatorname{cov}\left(\beta_1, \beta_3\right),    
   \end{equation}
-  which we can use to calculate confidence interals.
+  which we can use this to calculate confidence interals. Results are in Table
+  \ref{tab:beta_1_3_intervals}. The estimates are all positive, so the
+  probability of higher fluoride intake increases with age for children with
+  higher maternal incomes. None of the confidence intervals contain $0$, so the
+  effect is statistically significant at level $\alpha = 0.05$ in all three
+  models. In the models that account for the within-subject correlation (GEE
+  Exchangeable and Mixed Model), the estimate is larger. The Mixed Model has
+  more parameters and better accounts for the correlation and gives the largest
+  estimate.
 \end{description}
 {\em \item Now repeat part (a), but use model~(\ref{eq:nointeract}) instead of~(\ref{eq:interact}) (there are now only two regression coefficients to report per model).}
+\begin{table}[ht]
+  \scriptsize
+  \centering
+  \input{model_age_full_data_fit.tex}
+  \caption{Model fits of Equation \ref{eq:nointeract} with different correlation
+    structures to the data in \texttt{fluoride.csv}.}
+  \label{tab:model_age_full_data_fit}
+\end{table}
+
+\begin{description}
+\item[Solution:] The point estimates and standard errors of fitting the model in
+  Equation \ref{eq:nointeract} can be found in Table
+  \ref{tab:model_age_full_data_fit}. Now $\beta_1$ is close to $0$ in all three
+  models. Two of the models are slightly greater than $0$, and one is slightly
+  less than $0$..
+\end{description}
 {\em \item Download the dataset \texttt{fluoride.miss.csv} from the course website and repeat the calculations from part (d).  Note \texttt{fluoride.miss.csv} is a subset of \texttt{fluoride.csv}, with more missing data.}
+\begin{table}[ht]
+  \scriptsize
+  \centering
+  \input{model_age_miss_data_fit.tex}
+  \caption{Model fits of Equation \ref{eq:nointeract} with different correlation
+    structures to the data in \texttt{fluoride.miss.csv}.}
+  \label{tab:model_age_miss_data_fit}
+\end{table}
+\begin{description}
+\item[Solution:] The results of fitting the model in Equation
+  \ref{eq:nointeract} to \texttt{fluoride.miss.csv} can be found in Table
+  \ref{tab:model_age_miss_data_fit}. Now all three estimates of $\beta_1$ are
+  positive.
+\end{description}
 {\em \item  Discuss the differences between your results in parts (d) and (e).  Speculate
 about the missingness mechanism that gave rise to the \texttt{fluoride.miss.csv} dataset and 
 explain how this might account for what you observe.  You might find it
-helpful to conduct exploratory analyses of the two datasets and to consider your findings from part (a) of
-this problem.
-}
+helpful to conduct exploratory analyses of the two datasets and to consider your findings from part (a) of this problem.}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics{dataset_comparison.pdf}
+  \caption{Number of children by maternal income in \texttt{fluoride.csv} (Full)
+    versus \texttt{fluoride.miss.csv} (Partial).}
+  \label{fig:dataset_comparison}
+\end{figure}
+
+\begin{description}
+\item[Solution:] In part (d), the estimates are close to $0$. In part (e), the
+  estimates are positive. Only the Mixed Model estimate is statistically
+  significant, however.
+
+  Recall that children with higher maternal incomes were more likely to see an
+  increase in fluoride intake with age. Indeed, see Figure
+  \ref{fig:dataset_comparison}. In \texttt{fluoride.miss.csv}, we are missing
+  records of children with low maternal income, so the estimate of $\beta_1$ is
+  closer to that of children with higher maternal income, that is, more
+  positive.
+\end{description}
 
 \end{enumerate}
-
-
-\FloatBarrier
 
 \section*{Appendix}
 
 Code to fit the models is attached on the following pages.
+
+\FloatBarrier
 
 \includepdf[pages=-]{flouride.pdf}
 
